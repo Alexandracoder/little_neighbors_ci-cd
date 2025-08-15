@@ -7,7 +7,6 @@ import com.littleneighbors.features.user.mapper.UserMapper;
 import com.littleneighbors.features.user.model.Role;
 import com.littleneighbors.features.user.model.User;
 import com.littleneighbors.features.user.repository.UserRepository;
-import com.littleneighbors.features.user.service.UserService;
 import com.littleneighbors.features.user.service.UserServiceImpl;
 import com.littleneighbors.shared.exceptions.ResourceNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
@@ -156,20 +155,16 @@ public class UserServiceImplTest {
 
         UserResponse expectedResponse = createTestUserResponse(updatedUser);
 
-        // Mocks
         when(userRepository.findById(existingUser.getId())).thenReturn(Optional.of(existingUser));
         when(userRepository.existsByEmail(updateRequest.getEmail())).thenReturn(false);
         when(userRepository.save(any(User.class))).thenReturn(updatedUser);
         when(userMapper.toResponse(updatedUser)).thenReturn(expectedResponse);
 
-        // Llamada
         UserResponse response = userService.updateUser(existingUser.getId(), updateRequest);
 
-        // Asserts
         assertEquals(expectedResponse.getEmail(), response.getEmail());
         assertEquals(expectedResponse.getRole(), response.getRole());
 
-        // Verificaciones
         verify(userRepository, times(1)).findById(existingUser.getId());
         verify(userRepository, times(1)).save(any(User.class));
     }
