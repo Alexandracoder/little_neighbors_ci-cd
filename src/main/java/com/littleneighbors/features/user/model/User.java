@@ -32,5 +32,8 @@ public class User extends Auditable {
     @NotNull(message = "Password is a required field")
     private String password;
 
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
 }
 
