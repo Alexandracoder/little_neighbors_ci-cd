@@ -27,11 +27,11 @@ public class User extends Auditable {
     @Email(message = "Email should be valid")
     private String email;
 
-
     @Column(nullable = false)
     @NotNull(message = "Password is a required field")
     private String password;
 
+    @Column(name = "role", nullable = false)
     @Enumerated(EnumType.STRING)
     private Role role;
 

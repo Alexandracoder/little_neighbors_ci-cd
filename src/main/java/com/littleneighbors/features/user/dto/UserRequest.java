@@ -25,10 +25,8 @@ public class UserRequest {
     @Pattern(regexp = "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\\\d)(?=.*[@$!%*?&]).+$",message = "Password must contain at least one uppercase,one lowercase letter one number one special character")
     private String password;
 
-
     @NotNull
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;
-
 }
