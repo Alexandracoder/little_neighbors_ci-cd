@@ -1,7 +1,9 @@
 package com.littleneighbors.features.family.model;
 
+import com.littleneighbors.features.child.model.Child;
 import com.littleneighbors.features.neighborhood.model.Neighborhood;
 import com.littleneighbors.features.user.model.User;
+import com.littleneighbors.shared.Identifiable;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,7 +12,9 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "families")
@@ -19,7 +23,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Family {
+public class Family implements Identifiable<Long> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private  Long id;
@@ -54,4 +58,7 @@ public class Family {
     @LastModifiedDate
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    @OneToMany(mappedBy = "family", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Child> children;
 }

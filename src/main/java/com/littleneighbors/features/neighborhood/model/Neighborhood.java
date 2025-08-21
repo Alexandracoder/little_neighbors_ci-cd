@@ -1,4 +1,5 @@
 package com.littleneighbors.features.neighborhood.model;
+import com.littleneighbors.shared.Identifiable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -12,7 +13,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Neighborhood {
+public class Neighborhood implements Identifiable<Long> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

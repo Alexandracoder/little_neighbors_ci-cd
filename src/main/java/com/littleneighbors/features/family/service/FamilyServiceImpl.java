@@ -30,45 +30,42 @@ public class FamilyServiceImpl implements FamilyService {
                     "This user already has a family created");
         }
 
-        Family family = FamilyMapper.toEntity(request);
-
+        Family family = familyMapper.fromRequest(request);
         Family savedFamily = familyRepository.save(family);
-
-        return FamilyMapper.toResponse(savedFamily);
+        return familyMapper.toResponse(savedFamily);
     }
 
     @Override
     public FamilyResponse getFamilyById(Long id) {
         Family family = familyRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Family not found with id: " + id));
-        return FamilyMapper.toResponse(family);
+        return familyMapper.toResponse(family);
     }
 
-    @Override
     public List<FamilyResponse> getAllFamilies() {
         return familyRepository.findAll()
                 .stream()
-                .map(FamilyMapper::toResponse)
+                .map(familyMapper::toResponse)
                 .toList();
     }
 
     @Override
-    public FamilyResponse updateFamily( Long id, FamilyRequest request) {
+    public FamilyResponse updateFamily(Long id, FamilyRequest request) {
         Family family = familyRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Family not found with id: " + id));
 
         Neighborhood neighborhood = neighborhoodRepository.findByName(request.getNeighborhood())
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Neighborhood not found: " + request.getNeighborhood()));
+
         family.setRepresentativeName(request.getRepresentativeName());
         family.setNeighborhood(neighborhood);
         family.setArea(request.getArea());
 
         Family updatedFamily = familyRepository.save(family);
 
-        return FamilyMapper.toResponse(updatedFamily);
+        return familyMapper.toResponse(updatedFamily);
     }
-
     @Override
     public void deleteFamily(Long id) {
         if(!familyRepository.existsById(id))

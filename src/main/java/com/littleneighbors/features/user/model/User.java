@@ -1,5 +1,6 @@
 package com.littleneighbors.features.user.model;
 
+import com.littleneighbors.shared.Identifiable;
 import com.littleneighbors.shared.model.Auditable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -16,7 +17,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class User extends Auditable {
+public class User extends Auditable implements Identifiable<Long> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
