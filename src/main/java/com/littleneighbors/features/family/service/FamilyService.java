@@ -2,18 +2,14 @@ package com.littleneighbors.features.family.service;
 
 import com.littleneighbors.features.family.dto.FamilyRequest;
 import com.littleneighbors.features.family.dto.FamilyResponse;
+import com.littleneighbors.shared.service.GenericService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
-import java.util.List;
+public interface FamilyService extends GenericService<FamilyRequest, FamilyResponse, Long> {
+    FamilyResponse create(FamilyRequest request);
+    FamilyResponse update(Long id, FamilyRequest request);
+    FamilyResponse getFamilyByUserId(Long userId);
+    Page<FamilyResponse> getFamilies(Pageable pageable);
 
-public interface FamilyService {
-
-    FamilyResponse createFamily(FamilyRequest request);
-
-    FamilyResponse getFamilyById(Long id);
-
-    List<FamilyResponse> getAllFamilies();
-
-    FamilyResponse updateFamily(Long id, FamilyRequest request);
-
-    void deleteFamily(Long id);
 }

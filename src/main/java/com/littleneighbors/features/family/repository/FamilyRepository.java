@@ -14,5 +14,5 @@ public interface FamilyRepository extends JpaRepository <Family ,Long> {
         Optional<Family>findByFamilyName(String familyName);
         List<Family>findByFamilyNameContainingIgnoreCase(String partialFamilyName);
 
-    boolean existsByUserId(Long userId);
+        boolean existsByUserId(Long userId);
 }

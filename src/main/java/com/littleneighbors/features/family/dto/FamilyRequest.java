@@ -1,20 +1,26 @@
 package com.littleneighbors.features.family.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class FamilyRequest {
-    @NotBlank(message = "Representative name is require")
+    @NotBlank(message = "Representative name is required")
     private String representativeName;
 
-    @NotBlank(message = "Neighborhood is required")
-    private String neighborhood;
+    @NotNull(message = "Neighborhood is required")
+    private Long neighborhoodId;
 
     private String area;
-    private Long userId;
+
+    private List<Long> ChildrenIds;
 }

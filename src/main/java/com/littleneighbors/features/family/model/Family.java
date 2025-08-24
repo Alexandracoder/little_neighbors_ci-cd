@@ -12,8 +12,8 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -41,7 +41,7 @@ public class Family implements Identifiable<Long> {
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    @Column(name = "profile:pictureUrl", length = 255)
+    @Column(name = "profile_picture_url", length = 255)
     private String profilePictureUrl;
 
    @ManyToOne
@@ -51,6 +51,9 @@ public class Family implements Identifiable<Long> {
     @Column(name = "area",nullable = false, length = 255)
     private String area;
 
+    @OneToMany(mappedBy = "family", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Child> children = new ArrayList<>();
+
     @CreatedDate
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
@@ -58,7 +61,4 @@ public class Family implements Identifiable<Long> {
     @LastModifiedDate
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-
-    @OneToMany(mappedBy = "family", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Child> children;
 }
