@@ -1,77 +1,122 @@
 package com.littleneighbors.features.family.service;
 
+import com.littleneighbors.features.child.model.Child;
+import com.littleneighbors.features.child.repository.ChildRepository;
 import com.littleneighbors.features.family.dto.FamilyRequest;
 import com.littleneighbors.features.family.dto.FamilyResponse;
 import com.littleneighbors.features.family.mapper.FamilyMapper;
 import com.littleneighbors.features.family.model.Family;
 import com.littleneighbors.features.family.repository.FamilyRepository;
-import com.littleneighbors.features.neighborhood.model.Neighborhood;
 import com.littleneighbors.features.neighborhood.repository.NeighborhoodRepository;
+import com.littleneighbors.features.user.model.User;
+import com.littleneighbors.features.user.repository.UserRepository;
 import com.littleneighbors.features.user.exception.DuplicateResourceException;
+import com.littleneighbors.shared.AbstractGenericService;
 import com.littleneighbors.shared.exceptions.ResourceNotFoundException;
-import lombok.RequiredArgsConstructor;
+import jakarta.transaction.Transactional;
+import jakarta.validation.constraints.NotNull;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-
 @Service
-@RequiredArgsConstructor
-public class FamilyServiceImpl implements FamilyService {
+public class FamilyServiceImpl
+        extends AbstractGenericService<Family, FamilyRequest, FamilyResponse, Long>
+        implements FamilyService {
 
     private final FamilyRepository familyRepository;
     private final NeighborhoodRepository neighborhoodRepository;
-    private final FamilyMapper familyMapper;
+    private final UserRepository userRepository;
+    private final ChildRepository childRepository;
+    private final FamilyMapper mapper;
+
+    public FamilyServiceImpl(FamilyRepository familyRepository,
+                             NeighborhoodRepository neighborhoodRepository,
+                             UserRepository userRepository,
+                             ChildRepository childRepository,
+                             FamilyMapper mapper) {
+        super(familyRepository, mapper);
+        this.familyRepository = familyRepository;
+        this.neighborhoodRepository = neighborhoodRepository;
+        this.userRepository = userRepository;
+        this.childRepository = childRepository;
+        this.mapper = mapper;
+    }
 
     @Override
-    public FamilyResponse createFamily(FamilyRequest request) {
-        boolean exists = familyRepository.existsByUserId(request.getUserId());
-        if (exists) {
-            throw new DuplicateResourceException(
-                    "This user already has a family created");
+    @Transactional
+    public FamilyResponse create(@NotNull FamilyRequest request) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByEmail(username)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        if (familyRepository.existsByUserId(user.getId())) {
+            throw new DuplicateResourceException("This user already has a family created");
         }
 
-        Family family = FamilyMapper.toEntity(request);
+        Family family = mapper.fromRequest(request);
+        family.setUser(user);
+        family.setNeighborhood(
+                neighborhoodRepository.findById(request.getNeighborhoodId())
+                        .orElseThrow(() -> new ResourceNotFoundException("Neighborhood not found"))
+        );
+
+        if (request.getChildrenIds() != null && !request.getChildrenIds().isEmpty()) {
+            List<Child> children = childRepository.findAllById(request.getChildrenIds());
+            if (children.size() != request.getChildrenIds().size()) {
+                throw new ResourceNotFoundException("One or more children not found");
+            }
+            children.forEach(child -> child.setFamily(family));
+            family.setChildren(children);
+        }
 
         Family savedFamily = familyRepository.save(family);
-
-        return FamilyMapper.toResponse(savedFamily);
+        return mapper.toResponse(savedFamily);
     }
 
     @Override
-    public FamilyResponse getFamilyById(Long id) {
+    @Transactional
+    public FamilyResponse update(Long id, FamilyRequest request) {
         Family family = familyRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Family not found with id: " + id));
-        return FamilyMapper.toResponse(family);
-    }
+                .orElseThrow(() -> new ResourceNotFoundException("Family not found"));
 
-    @Override
-    public List<FamilyResponse> getAllFamilies() {
-        return familyRepository.findAll()
-                .stream()
-                .map(FamilyMapper::toResponse)
-                .toList();
-    }
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByEmail(username)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-    @Override
-    public FamilyResponse updateFamily( Long id, FamilyRequest request) {
-        Family family = familyRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Family not found with id: " + id));
+        if (familyRepository.existsByUserId(user.getId()) &&
+                !family.getUser().getId().equals(user.getId())) {
+            throw new DuplicateResourceException("This user already has a family created");
+        }
 
-        Neighborhood neighborhood = neighborhoodRepository.findByName(request.getNeighborhood())
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Neighborhood not found: " + request.getNeighborhood()));
         family.setRepresentativeName(request.getRepresentativeName());
-        family.setNeighborhood(neighborhood);
         family.setArea(request.getArea());
+        family.setNeighborhood(
+                neighborhoodRepository.findById(request.getNeighborhoodId())
+                        .orElseThrow(() -> new ResourceNotFoundException("Neighborhood not found"))
+        );
+
+        if (request.getChildrenIds() != null) {
+            List<Child> children = childRepository.findAllById(request.getChildrenIds());
+            children.forEach(child -> child.setFamily(family));
+            family.setChildren(children);
+        }
 
         Family updatedFamily = familyRepository.save(family);
-
-        return FamilyMapper.toResponse(updatedFamily);
+        return mapper.toResponse(updatedFamily);
     }
 
     @Override
-    public void deleteFamily(Long id) {
-        if(!familyRepository.existsById(id))
-            throw new ResourceNotFoundException("No family exists with ID " + id + ", cannot delete.");
+    public Page<FamilyResponse> getFamilies(Pageable pageable) {
+        return familyRepository.findAll(pageable).map(mapper::toResponse);
+    }
+
+    @Override
+    public FamilyResponse getFamilyByUserId(Long userId) {
+        Family family = familyRepository.findByUserId(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Family not found for user id " + userId));
+        return mapper.toResponse(family);
     }
 }
