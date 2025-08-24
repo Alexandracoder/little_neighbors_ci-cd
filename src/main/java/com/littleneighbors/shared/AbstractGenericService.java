@@ -3,20 +3,25 @@ package com.littleneighbors.shared;
 import com.littleneighbors.shared.exceptions.ResourceNotFoundException;
 import com.littleneighbors.shared.mapper.GenericMapper;
 import com.littleneighbors.shared.service.GenericService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-
-import java.util.List;
 
 public abstract class AbstractGenericService<
         E extends Identifiable<I>, Req, Res, I>
         implements GenericService<Req, Res, I> {
 
-    protected final JpaRepository<E, I> repository;
-    protected final GenericMapper<E, Req, Res> mapper;
+    protected JpaRepository<E, I> repository;
+    protected GenericMapper<Req, Res, E> mapper;
 
     protected AbstractGenericService(JpaRepository<E, I> repository,
-                                     GenericMapper<E, Req, Res> mapper) {
+                                     GenericMapper<Req, Res, E> mapper) {
         this.repository = repository;
+        this.mapper = mapper;
+    }
+
+
+    protected AbstractGenericService(GenericMapper<Req, Res, E> mapper) {
         this.mapper = mapper;
     }
 
@@ -31,25 +36,24 @@ public abstract class AbstractGenericService<
         E entity = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Entity not found with id " + id));
         return mapper.toResponse(entity);
-
     }
 
     @Override
-    public List<Res> findAll() {
-        List<E> entities = repository.findAll();
-        return mapper.toResponseList(entities);
-
+    public Page<Res> findAll(Pageable pageable) {
+        return repository.findAll(pageable)
+                .map(entity -> mapper.toResponse(entity));
     }
 
     @Override
     public Res update(I id, Req request) {
         E existing = repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Entity not found with i " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Entity not found with id " + id));
 
         E updated = mapper.fromRequest(request);
         updated.setId(id);
         return mapper.toResponse(repository.save(updated));
     }
+
     @Override
     public void delete(I id) {
         if (!repository.existsById(id)) {

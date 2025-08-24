@@ -1,13 +1,22 @@
 package com.littleneighbors.shared.mapper;
 
+import com.littleneighbors.features.family.dto.FamilyRequest;
+import jakarta.validation.constraints.NotNull;
+
 import java.util.List;
+import java.util.stream.Collectors;
 
-public interface GenericMapper<E, Req, Res> {
+public abstract class GenericMapper<Req, Res, E> {
 
-    E fromRequest(Req request);
+  public abstract   E fromRequest(@NotNull Req request);
 
-    Res toResponse(E entity);
+    public abstract Res toResponse(E entity);
 
-    List<Res> toResponseList(List<E> entities);
+   public List<Res> toResponseList(List<E> entities) {
+       if (entities == null) return List.of();
+       return entities.stream()
+               .map(this::toResponse)
+               .collect(Collectors.toList());
+   }
+
 }
-
