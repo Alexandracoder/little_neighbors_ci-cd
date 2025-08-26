@@ -14,12 +14,13 @@ public abstract class AbstractGenericService<
     protected JpaRepository<E, I> repository;
     protected GenericMapper<Req, Res, E> mapper;
 
-    protected AbstractGenericService(JpaRepository<E, I> repository,
-                                     GenericMapper<Req, Res, E> mapper) {
+    protected AbstractGenericService() {
+    }
+
+      protected AbstractGenericService(JpaRepository<E, I> repository, GenericMapper<Req, Res, E> mapper) {
         this.repository = repository;
         this.mapper = mapper;
     }
-
 
     protected AbstractGenericService(GenericMapper<Req, Res, E> mapper) {
         this.mapper = mapper;
@@ -41,7 +42,7 @@ public abstract class AbstractGenericService<
     @Override
     public Page<Res> findAll(Pageable pageable) {
         return repository.findAll(pageable)
-                .map(entity -> mapper.toResponse(entity));
+                .map(mapper::toResponse);
     }
 
     @Override
@@ -49,10 +50,10 @@ public abstract class AbstractGenericService<
         E existing = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Entity not found with id " + id));
 
-        E updated = mapper.fromRequest(request);
-        updated.setId(id);
-        return mapper.toResponse(repository.save(updated));
+        updateEntityFromRequest(request, existing);
+        return mapper.toResponse(repository.save(existing));
     }
+    protected  abstract void updateEntityFromRequest(Req request, E existing);
 
     @Override
     public void delete(I id) {

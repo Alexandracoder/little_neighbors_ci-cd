@@ -4,6 +4,7 @@ import com.littleneighbors.features.family.model.Family;
 import com.littleneighbors.shared.Identifiable;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
@@ -17,6 +18,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "children")
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
@@ -26,7 +28,7 @@ public class Child implements Identifiable<Long> {
     private  Long id;
 
     @Column(nullable = false)
-    private String gender;
+    private Gender gender;
 
     @Column(nullable = false)
     private LocalDate birthDate;
@@ -35,7 +37,7 @@ public class Child implements Identifiable<Long> {
     @JoinColumn(name = "family_id", nullable = false)
     private Family family;
 
-    @Column(name = "user:id", nullable = false)
+    @Column(name = "user_id", nullable = false)
     private Long userId;
 
     @CreatedDate

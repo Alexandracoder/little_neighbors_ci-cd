@@ -1,5 +1,6 @@
 package com.littleneighbors.features.family.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.littleneighbors.features.child.dto.ChildResponse;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,7 +9,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.List;
-
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -17,11 +18,9 @@ public class FamilyResponse {
     private Long id;
     private String representativeName;
     private Long neighborhoodId;
-    private String area;
+    private String district;
     private List<Long> childrenIds;
-    private List<ChildResponse> children;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    private List<ChildInfo> children;
 }
 
 

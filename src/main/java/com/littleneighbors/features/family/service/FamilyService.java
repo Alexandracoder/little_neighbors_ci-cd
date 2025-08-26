@@ -11,5 +11,4 @@ public interface FamilyService extends GenericService<FamilyRequest, FamilyRespo
     FamilyResponse update(Long id, FamilyRequest request);
     FamilyResponse getFamilyByUserId(Long userId);
     Page<FamilyResponse> getFamilies(Pageable pageable);
-
 }

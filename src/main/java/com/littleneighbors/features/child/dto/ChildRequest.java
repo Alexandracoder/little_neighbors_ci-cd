@@ -2,13 +2,16 @@ package com.littleneighbors.features.child.dto;
 
 import com.littleneighbors.features.child.model.Gender;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
 @Data
-@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class ChildRequest {
     @NotNull(message = "Gender is required")
     private  Gender gender;

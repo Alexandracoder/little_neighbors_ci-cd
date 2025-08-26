@@ -1,9 +1,9 @@
 package com.littleneighbors.features.family.dto;
 
-import jakarta.persistence.Id;
+import com.littleneighbors.features.child.model.Child;
+import com.littleneighbors.features.child.model.Gender;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.hibernate.query.sql.internal.ParameterRecognizerImpl;
 
 import java.time.Period;
 
@@ -11,10 +11,10 @@ import java.time.Period;
 @AllArgsConstructor
 public class ChildInfo {
     private  Long id;
-    private String gender;
-    private  Integer age;
+    private Gender gender;
+    private Integer age;
 
-    public static  ChildInfo fromEntity(com.littleneighbors.features.child.model.Child child) {
+    public static  ChildInfo fromEntity(Child child) {
         int age = Period.between(child.getBirthDate(), java.time.LocalDate.now()).getYears();
         return new ChildInfo(child.getId(), child.getGender(),age );
 
