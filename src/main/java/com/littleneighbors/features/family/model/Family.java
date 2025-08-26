@@ -38,19 +38,20 @@ public class Family implements Identifiable<Long> {
     @Column(name = "family_name", length = 255)
     private String familyName;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT", nullable = false)
     private String description;
 
-    @Column(name = "profile_picture_url", length = 255)
+    @Column(name = "profile_picture_url", length = 255, nullable = true)
     private String profilePictureUrl;
 
    @ManyToOne
    @JoinColumn(name = "neighborhood_id")
    private Neighborhood neighborhood;
 
-    @Column(name = "area",nullable = false, length = 255)
-    private String area;
+    @Column(name = "district",nullable = false, length = 255)
+    private String district;
 
+    @Builder.Default
     @OneToMany(mappedBy = "family", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Child> children = new ArrayList<>();
 

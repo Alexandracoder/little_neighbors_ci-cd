@@ -1,13 +1,18 @@
 package com.littleneighbors.features.family.mapper;
 
 import com.littleneighbors.features.child.mapper.ChildMapper;
+import com.littleneighbors.features.family.dto.ChildInfo;
 import com.littleneighbors.features.family.dto.FamilyRequest;
 import com.littleneighbors.features.family.dto.FamilyResponse;
 import com.littleneighbors.features.family.model.Family;
 import com.littleneighbors.features.neighborhood.model.Neighborhood;
+import com.littleneighbors.features.user.model.User;
 import com.littleneighbors.shared.mapper.GenericMapper;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class FamilyMapper extends GenericMapper<FamilyRequest, FamilyResponse, Family> {
@@ -23,26 +28,29 @@ public class FamilyMapper extends GenericMapper<FamilyRequest, FamilyResponse, F
         Neighborhood neighborhood = new Neighborhood();
         neighborhood.setId(request.getNeighborhoodId());
 
-        Family family = Family.builder()
+        return Family.builder()
                 .representativeName(request.getRepresentativeName())
                 .neighborhood(neighborhood)
+                .district(request.getDistrict())
+                .description(request.getFamilyName())
+                .familyName(request.getFamilyName())
+                .profilePictureUrl(request.getProfilePictureUrl())
                 .build();
-        return family;
     }
 
     @Override
     public FamilyResponse toResponse(Family entity) {
-        FamilyResponse response = FamilyResponse.builder()
+        List<ChildInfo> childrenInfo = entity.getChildren() == null ? List.of() :
+        entity.getChildren().stream()
+                .map(ChildInfo::fromEntity)
+                .collect(Collectors.toList());
+
+        return FamilyResponse.builder()
                 .id(entity.getId())
                 .representativeName(entity.getRepresentativeName())
                 .neighborhoodId(entity.getNeighborhood() != null ? entity.getNeighborhood().getId() : null)
+                .district(entity.getDistrict())
                 .build();
-
-        if (entity.getChildren() != null && !entity.getChildren().isEmpty()) {
-            response.setChildren(childMapper.toResponseList(entity.getChildren()));
-        }
-
-        return response;
     }
 }
 

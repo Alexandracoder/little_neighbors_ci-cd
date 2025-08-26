@@ -16,11 +16,14 @@ import java.util.List;
 public class FamilyRequest {
     @NotBlank(message = "Representative name is required")
     private String representativeName;
-
     @NotNull(message = "Neighborhood is required")
     private Long neighborhoodId;
-
-    private String area;
-
-    private List<Long> ChildrenIds;
+    private String district;
+    @NotBlank(message = "Family name is required")
+    private String familyName;
+    @NotBlank(message = "Description is required")
+    private String description;
+    private String profilePictureUrl;
+    private List<Long> childrenIds;
+    private Long userId;
 }
