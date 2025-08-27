@@ -72,8 +72,16 @@ public class FamilyServiceImpl
     protected void updateEntityFromRequest(FamilyRequest request, Family existing) {
         existing.setRepresentativeName(request.getRepresentativeName());
         Neighborhood neighborhood = neighborhoodRepository.findById(request.getNeighborhoodId())
-                        .orElseThrow(() -> new ResourceNotFoundException("Neighborhood not found with id " + request.getNeighborhoodId()));
+                        .orElseThrow(() -> new ResourceNotFoundException
+                                ("Neighborhood not found with id " + request.getNeighborhoodId()));
         existing.setNeighborhood(neighborhood);
     }
 
+    public FamilyResponse updateFamily(Long id, FamilyRequest request) {
+        Family existing = familyRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Family not found with id " + id));
+        updateEntityFromRequest(request, existing);
+        Family updated = familyRepository.save(existing);
+        return mapper.toResponse(updated);
+    }
 }
