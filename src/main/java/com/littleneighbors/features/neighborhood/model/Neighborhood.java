@@ -22,7 +22,12 @@ public class  Neighborhood implements Identifiable<Long> {
     @Min(value = 1, message = "Neighborhood id must be greater than 0")
     private Long id;
 
-    @Column(nullable = false, unique = true, length = 100)
+    @Column(nullable = false, unique = true, length = 255)
+    @NotNull(message = "Is a required field")
+    private String cityName;
+
+
+    @Column(nullable = false, unique = true, length = 255)
     @NotNull(message = "Is a required field")
     private String name;
 
