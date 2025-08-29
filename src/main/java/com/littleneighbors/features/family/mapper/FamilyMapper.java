@@ -6,7 +6,6 @@ import com.littleneighbors.features.family.dto.FamilyRequest;
 import com.littleneighbors.features.family.dto.FamilyResponse;
 import com.littleneighbors.features.family.model.Family;
 import com.littleneighbors.features.neighborhood.model.Neighborhood;
-import com.littleneighbors.features.user.model.User;
 import com.littleneighbors.shared.mapper.GenericMapper;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.stereotype.Component;

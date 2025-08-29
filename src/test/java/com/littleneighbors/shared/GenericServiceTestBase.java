@@ -42,7 +42,7 @@ public abstract class GenericServiceTestBase<REQ,  RES, ENTITY, SERVICE> {
     }
 
     @Test
-    void testGetById_existing() {
+    void testGetById_Happy() {
          RES response = getByIdFromService(getExistingId());
         assertThat(response).isNotNull();
 
@@ -51,7 +51,7 @@ public abstract class GenericServiceTestBase<REQ,  RES, ENTITY, SERVICE> {
 
 
     @Test
-    void testGetById_nonExisting() {
+    void testGetById_Unhappy() {
         assertThrowsFromService(getNonExistingId());
     }
 
