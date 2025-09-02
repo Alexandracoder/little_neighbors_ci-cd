@@ -15,6 +15,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class Match extends Auditable implements Identifiable<Long> {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -35,8 +36,4 @@ public class Match extends Auditable implements Identifiable<Long> {
         return id;
     }
 }
-
-
-
-
 

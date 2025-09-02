@@ -27,6 +27,7 @@ import java.util.Set;
 @AllArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
 public class Child implements Identifiable<Long> {
+    public Long getId;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
