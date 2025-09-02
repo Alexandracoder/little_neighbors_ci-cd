@@ -1,6 +1,7 @@
 package com.littleneighbors.features.family.repository;
 
 import com.littleneighbors.features.family.model.Family;
+import com.littleneighbors.features.neighborhood.model.Neighborhood;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -13,6 +14,6 @@ public interface FamilyRepository extends JpaRepository <Family ,Long> {
         List<Family>findByNeighborhoodId(Long neighborhoodId);
         Optional<Family>findByFamilyName(String familyName);
         List<Family>findByFamilyNameContainingIgnoreCase(String partialFamilyName);
-
+    List<Family> findByNeighborhoodOrNeighborhood_PostalCode(Neighborhood neighborhood, String postalCode);
         boolean existsByUserId(Long userId);
 }
