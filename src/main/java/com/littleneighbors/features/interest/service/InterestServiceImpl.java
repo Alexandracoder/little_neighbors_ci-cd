@@ -9,13 +9,14 @@ import com.littleneighbors.features.interest.model.Interest;
 import com.littleneighbors.features.interest.repository.InterestRepository;
 import com.littleneighbors.shared.AbstractGenericService;
 import com.littleneighbors.shared.exceptions.ResourceNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
+@Transactional
 public class InterestServiceImpl extends AbstractGenericService<Interest, InterestRequest, InterestResponse, Long> {
 
     private  final ChildRepository childRepository;

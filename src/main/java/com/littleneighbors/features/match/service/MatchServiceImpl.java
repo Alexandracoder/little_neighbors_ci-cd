@@ -32,11 +32,24 @@ public class MatchServiceImpl extends AbstractGenericService<Match, MatchRequest
     private final FamilyRepository familyRepository;
     private final MatchMapper mapper;
 
+
+
     @Override
     protected void updateEntityFromRequest(MatchRequest request, Match existing) {
-        if (request.getStatus() != null) {
-            existing.setStatus(request.getStatus());
-        }
+    }
+
+    public MatchResponse acceptMatch(Long matchId) {
+        Match match = matchRepository.findById(matchId)
+                .orElseThrow(() -> new ResourceNotFoundException("Match not found"));
+        match.setStatus(MatchStatus.ACCEPTED);
+        return mapper.toResponse(matchRepository.save(match));
+    }
+
+    public MatchResponse rejectMatch(Long matchId) {
+        Match match = matchRepository.findById(matchId)
+                .orElseThrow(() -> new ResourceNotFoundException("Match not found"));
+        match.setStatus(MatchStatus.REJECTED);
+        return mapper.toResponse(matchRepository.save(match));
     }
 
     public Page<MatchResponse> findCompatibleMatches(Long familyId, Pageable pageable) {
