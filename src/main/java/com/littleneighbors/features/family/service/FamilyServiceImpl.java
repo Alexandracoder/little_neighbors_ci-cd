@@ -15,6 +15,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class FamilyServiceImpl
         extends AbstractGenericService<Family, FamilyRequest, FamilyResponse, Long>
@@ -60,6 +62,11 @@ public class FamilyServiceImpl
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Family not found for user id " + userId));
         return mapper.toResponse(family);
+    }
+
+    @Override
+    public List<Family> findByNeighborhoodOrPostalCode(Neighborhood neighborhood, String postalCode) {
+        return List.of();
     }
 
     @Override
