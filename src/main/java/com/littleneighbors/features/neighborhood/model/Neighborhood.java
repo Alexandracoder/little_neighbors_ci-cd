@@ -7,14 +7,13 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
-@EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "neighborhoods")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class  Neighborhood extends Auditable implements Identifiable<Long> {
+public class  Neighborhood implements Identifiable<Long> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -32,11 +32,24 @@ public class MatchServiceImpl extends AbstractGenericService<Match, MatchRequest
     private final FamilyRepository familyRepository;
     private final MatchMapper mapper;
 
+
+
     @Override
     protected void updateEntityFromRequest(MatchRequest request, Match existing) {
-        if (request.getStatus() != null) {
-            existing.setStatus(request.getStatus());
-        }
+    }
+
+    public MatchResponse acceptMatch(Long matchId) {
+        Match match = matchRepository.findById(matchId)
+                .orElseThrow(() -> new ResourceNotFoundException("Match not found"));
+        match.setStatus(MatchStatus.ACCEPTED);
+        return mapper.toResponse(matchRepository.save(match));
+    }
+
+    public MatchResponse rejectMatch(Long matchId) {
+        Match match = matchRepository.findById(matchId)
+                .orElseThrow(() -> new ResourceNotFoundException("Match not found"));
+        match.setStatus(MatchStatus.REJECTED);
+        return mapper.toResponse(matchRepository.save(match));
     }
 
     public Page<MatchResponse> findCompatibleMatches(Long familyId, Pageable pageable) {
@@ -81,15 +94,18 @@ public class MatchServiceImpl extends AbstractGenericService<Match, MatchRequest
 
     private boolean alreadyMatchedThisWeek(Family f1, Family f2) {
         LocalDateTime oneWeekAgo = LocalDateTime.now().minusWeeks(1);
-        return matchRepository.existsByRequesterInAndReceiverInAndCreatedAfter(
-                f1.getChildren(), f2.getChildren(), oneWeekAgo
+
+        return matchRepository.existsByRequesterInAndReceiverInAndCreatedAtAfter(
+                f1.getChildren(),
+                f2.getChildren(),
+                oneWeekAgo
         );
     }
 
     private List<Family> findNearbyFamilies(Family currentFamily) {
-        return familyRepository.findByNeighborhoodOrPostalCode(
+        return familyRepository.findByNeighborhoodOrNeighborhood_PostalCode(
                 currentFamily.getNeighborhood(),
-                currentFamily.getNeighborhood().getPostalCode() // asegúrate de que existe getter
+                currentFamily.getNeighborhood().getPostalCode()
         );
     }
 
