@@ -1,5 +1,6 @@
 package com.littleneighbors.features.interest.model;
 
+import com.littleneighbors.shared.Identifiable;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -10,7 +11,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
- public class Interest {
+ public class Interest implements Identifiable<Long> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
