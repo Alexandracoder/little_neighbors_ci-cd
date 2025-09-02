@@ -1,47 +1,56 @@
 package com.littleneighbors.features.family.mapper;
 
+import com.littleneighbors.features.child.mapper.ChildMapper;
+import com.littleneighbors.features.family.dto.ChildInfo;
 import com.littleneighbors.features.family.dto.FamilyRequest;
 import com.littleneighbors.features.family.dto.FamilyResponse;
 import com.littleneighbors.features.family.model.Family;
+import com.littleneighbors.features.neighborhood.model.Neighborhood;
+import com.littleneighbors.shared.mapper.GenericMapper;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
-public class FamilyMapper {
+public class FamilyMapper extends GenericMapper<FamilyRequest, FamilyResponse, Family> {
 
-    public static Family toEntity(FamilyRequest request) {
-        if (request == null) {
-            return null;
-        }
-        Family family = new Family();
-        family.setRepresentativeName(request.getRepresentativeName());
-        family.setNeighborhood(request.getNeighborhood());
-        family.setArea(request.getArea());
-        return family;
-        }
-        public static FamilyResponse toResponse(Family family) {
-        if (family == null) {
-            return null;
+    private final ChildMapper childMapper;
 
-        }
-        FamilyResponse response = new FamilyResponse();
-            response.setId(family.getId());
-            response.setRepresentativeName(family.getRepresentativeName());
-            response.setNeighborhood(family.getNeighborhood());
-            response.setArea(family.getArea());
+    public FamilyMapper(ChildMapper childMapper) {
+        this.childMapper = childMapper;
+    }
 
-            if(family.getChildren() != null) {
-                List<Long> childrenIds = family.getChildren().stream()
-                        .map(child -> child.getId())
-                        .collect(Collectors.toList());
-                response.setChildrenIds(childrenIds);
+    @Override
+    public Family fromRequest(@NotNull FamilyRequest request) {
+        Neighborhood neighborhood = new Neighborhood();
+        neighborhood.setId(request.getNeighborhoodId());
 
-            }
-            response.setCreatedAt(family.getCreatedAt());
-            response.setUpdatedAt(family.getUpdatedAt());
+        return Family.builder()
+                .representativeName(request.getRepresentativeName())
+                .neighborhood(neighborhood)
+                .district(request.getDistrict())
+                .description(request.getFamilyName())
+                .familyName(request.getFamilyName())
+                .profilePictureUrl(request.getProfilePictureUrl())
+                .build();
+    }
 
-            return response;
+    @Override
+    public FamilyResponse toResponse(Family entity) {
+        List<ChildInfo> childrenInfo = entity.getChildren() == null ? List.of() :
+        entity.getChildren().stream()
+                .map(ChildInfo::fromEntity)
+                .collect(Collectors.toList());
+
+        return FamilyResponse.builder()
+                .id(entity.getId())
+                .representativeName(entity.getRepresentativeName())
+                .neighborhoodId(entity.getNeighborhood() != null ? entity.getNeighborhood().getId() : null)
+                .district(entity.getDistrict())
+                .build();
     }
 }
+
+
