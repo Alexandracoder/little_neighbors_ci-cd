@@ -15,6 +15,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class FamilyServiceImpl
         extends AbstractGenericService<Family, FamilyRequest, FamilyResponse, Long>
@@ -63,6 +65,11 @@ public class FamilyServiceImpl
     }
 
     @Override
+    public List<Family> findByNeighborhoodOrPostalCode(Neighborhood neighborhood, String postalCode) {
+        return List.of();
+    }
+
+    @Override
     public Page<FamilyResponse> getFamilies(Pageable pageable) {
         return familyRepository.findAll(pageable)
                 .map(mapper::toResponse);
@@ -72,8 +79,16 @@ public class FamilyServiceImpl
     protected void updateEntityFromRequest(FamilyRequest request, Family existing) {
         existing.setRepresentativeName(request.getRepresentativeName());
         Neighborhood neighborhood = neighborhoodRepository.findById(request.getNeighborhoodId())
-                        .orElseThrow(() -> new ResourceNotFoundException("Neighborhood not found with id " + request.getNeighborhoodId()));
+                        .orElseThrow(() -> new ResourceNotFoundException
+                                ("Neighborhood not found with id " + request.getNeighborhoodId()));
         existing.setNeighborhood(neighborhood);
     }
 
+    public FamilyResponse updateFamily(Long id, FamilyRequest request) {
+        Family existing = familyRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Family not found with id " + id));
+        updateEntityFromRequest(request, existing);
+        Family updated = familyRepository.save(existing);
+        return mapper.toResponse(updated);
+    }
 }
