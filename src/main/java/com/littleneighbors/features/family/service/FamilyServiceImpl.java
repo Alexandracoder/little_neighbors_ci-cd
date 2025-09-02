@@ -1,8 +1,7 @@
 package com.littleneighbors.features.family.service;
 
 import com.littleneighbors.features.child.repository.ChildRepository;
-import com.littleneighbors.features.family.dto.FamilyRequest;
-import com.littleneighbors.features.family.dto.FamilyResponse;
+import com.littleneighbors.features.family.dto.*;
 import com.littleneighbors.features.family.mapper.FamilyMapper;
 import com.littleneighbors.features.family.model.Family;
 import com.littleneighbors.features.family.repository.FamilyRepository;
@@ -27,9 +26,10 @@ public class FamilyServiceImpl
     private final UserRepository userRepository;
     private final ChildRepository childRepository;
     private final FamilyMapper mapper;
+    private Neighborhood neighborhood;
 
     public FamilyServiceImpl(FamilyRepository familyRepository, NeighborhoodRepository neighborhoodRepository,
-    UserRepository userRepository,ChildRepository childRepository, FamilyMapper mapper) {
+                             UserRepository userRepository, ChildRepository childRepository, FamilyMapper mapper) {
         super(familyRepository, mapper);
         this.familyRepository = familyRepository;
         this.neighborhoodRepository = neighborhoodRepository;
@@ -79,8 +79,8 @@ public class FamilyServiceImpl
     protected void updateEntityFromRequest(FamilyRequest request, Family existing) {
         existing.setRepresentativeName(request.getRepresentativeName());
         Neighborhood neighborhood = neighborhoodRepository.findById(request.getNeighborhoodId())
-                        .orElseThrow(() -> new ResourceNotFoundException
-                                ("Neighborhood not found with id " + request.getNeighborhoodId()));
+                .orElseThrow(() -> new ResourceNotFoundException
+                        ("Neighborhood not found with id " + request.getNeighborhoodId()));
         existing.setNeighborhood(neighborhood);
     }
 
@@ -91,4 +91,47 @@ public class FamilyServiceImpl
         Family updated = familyRepository.save(existing);
         return mapper.toResponse(updated);
     }
+
+    @Override
+    public FamilyLocationResponse getLocation(Long familyId) {
+        Family family = familyRepository.findById(familyId)
+                .orElseThrow(() -> new ResourceNotFoundException("Family not found"));
+
+        Neighborhood neighborhood = family.getNeighborhood();
+        return FamilyLocationResponse.builder()
+                .neighborhoodName(neighborhood != null ? neighborhood.getName() : null)
+                .postalCode(neighborhood != null ? neighborhood.getPostalCode() : null)
+                .build();
+    }
+
+    @Override
+    public FamilyLocationResponse updateLocation(Long familyId, FamilyLocationRequest request) {
+        Family family = familyRepository.findById(familyId)
+                .orElseThrow(() -> new ResourceNotFoundException("Family not found"));
+
+        Neighborhood neighborhood = neighborhoodRepository.findById(request.getNeighborhoodId())
+                .orElseThrow(() -> new ResourceNotFoundException("Neighborhood not found"));
+
+        family.setNeighborhood(neighborhood);
+        familyRepository.save(family);
+
+        return FamilyLocationResponse.builder()
+                .neighborhoodName(neighborhood.getName())
+                .postalCode(neighborhood.getPostalCode())
+                .build();
+    }
+
+    @Override
+    public FamilyResponse updateFamilyLocation(Long userId, FamilyLocationRequest request) {
+        Family family = familyRepository.findByUserId(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Family not found"));
+
+        Neighborhood neighborhood = neighborhoodRepository.findById(request.getNeighborhoodId())
+                .orElseThrow(() -> new ResourceNotFoundException("Neighborhood not found"));
+
+        family.setNeighborhood(neighborhood);
+        Family updated = familyRepository.save(family);
+        return mapper.toResponse(updated);
+    }
 }
+

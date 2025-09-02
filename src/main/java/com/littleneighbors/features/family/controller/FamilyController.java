@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("api/families")
+@RequestMapping("/families")
 public class FamilyController extends GenericController<FamilyRequest, FamilyResponse, Long> {
     private final FamilyService familyService;
 
