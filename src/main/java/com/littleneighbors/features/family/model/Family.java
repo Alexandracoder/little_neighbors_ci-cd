@@ -44,9 +44,9 @@ public class Family implements Identifiable<Long> {
     @Column(name = "profile_picture_url", length = 255, nullable = true)
     private String profilePictureUrl;
 
-   @ManyToOne
-   @JoinColumn(name = "neighborhood_id")
-   private Neighborhood neighborhood;
+    @ManyToOne
+    @JoinColumn(name = "neighborhood_id")
+    private Neighborhood neighborhood;
 
     @Column(name = "district",nullable = false, length = 255)
     private String district;

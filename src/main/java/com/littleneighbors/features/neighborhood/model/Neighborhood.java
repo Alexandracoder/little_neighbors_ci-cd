@@ -1,21 +1,20 @@
 package com.littleneighbors.features.neighborhood.model;
 
 import com.littleneighbors.shared.Identifiable;
+import com.littleneighbors.shared.model.Auditable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "neighborhoods")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class  Neighborhood implements Identifiable<Long> {
+public class  Neighborhood extends Auditable implements Identifiable<Long> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,4 +33,8 @@ public class  Neighborhood implements Identifiable<Long> {
     @Column(nullable = false)
     @NotNull(message = "Is a required field")
     private String streetName;
+
+    @Column(name = "postal code", nullable = true)
+    private String postalCode;
+
 }
