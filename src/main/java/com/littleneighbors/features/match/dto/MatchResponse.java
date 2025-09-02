@@ -20,5 +20,4 @@ public class MatchResponse {
     private MatchStatus status;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-
 }

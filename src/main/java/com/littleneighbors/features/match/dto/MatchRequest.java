@@ -1,6 +1,4 @@
 package com.littleneighbors.features.match.dto;
-
-import com.littleneighbors.features.match.model.MatchStatus;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,6 +16,4 @@ public class MatchRequest {
 
     @NotNull(message = "The ID of the child receiving the match is required.")
     private Long receivingChildId;
-
-    private MatchStatus status;
 }
