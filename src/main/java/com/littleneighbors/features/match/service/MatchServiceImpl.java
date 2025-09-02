@@ -81,8 +81,11 @@ public class MatchServiceImpl extends AbstractGenericService<Match, MatchRequest
 
     private boolean alreadyMatchedThisWeek(Family f1, Family f2) {
         LocalDateTime oneWeekAgo = LocalDateTime.now().minusWeeks(1);
-        return matchRepository.existsByRequesterInAndReceiverInAndCreatedAfter(
-                f1.getChildren(), f2.getChildren(), oneWeekAgo
+
+        return matchRepository.existsByRequesterInAndReceiverInAndCreatedAtAfter(
+                f1.getChildren(),
+                f2.getChildren(),
+                oneWeekAgo
         );
     }
 
