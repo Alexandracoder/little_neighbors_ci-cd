@@ -87,9 +87,9 @@ public class MatchServiceImpl extends AbstractGenericService<Match, MatchRequest
     }
 
     private List<Family> findNearbyFamilies(Family currentFamily) {
-        return familyRepository.findByNeighborhoodOrNeighborhood_PostalCode(
+        return familyRepository.findByNeighborhoodOrPostalCode(
                 currentFamily.getNeighborhood(),
-                currentFamily.getNeighborhood().getPostalCode()
+                currentFamily.getNeighborhood().getPostalCode() // asegúrate de que existe getter
         );
     }
 
