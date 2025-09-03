@@ -18,9 +18,11 @@ public class MatchController {
         this.matchService = matchService;
     }
     /**
-     * @param
-     * @param
-     * @return
+     * Get compatible matches for a family and generate pending matches.
+     *
+     * @param familyId the ID of the family to find matches for
+     * @param pageable pagination information
+     * @return a page of MatchResponse containing compatible matches
      */
     @GetMapping("/compatible/{familyId}")
     public ResponseEntity<Page<MatchResponse>> getCompatibleMatches(
