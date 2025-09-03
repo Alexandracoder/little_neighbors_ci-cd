@@ -17,7 +17,6 @@ public class FamilyResponse {
     private Long id;
     private String representativeName;
     private Long neighborhoodId;
-    private String district;
     private List<Long> childrenIds;
     private List<ChildInfo> children;
 }

@@ -2,14 +2,13 @@ package com.littleneighbors.features.match.controller;
 
 import com.littleneighbors.features.match.dto.MatchResponse;
 import com.littleneighbors.features.match.service.MatchServiceImpl;
-import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping
+@RequestMapping("/matches")
 public class MatchController {
 
     private final MatchServiceImpl matchService;

@@ -67,6 +67,7 @@ public class MatchServiceImpl extends AbstractGenericService<Match, MatchRequest
 
         List<MatchResponse> responses = compatibleFamilies.stream()
                 .map(f -> createPendingMatch(currentFamily, f))
+                .filter(r -> r != null)
                 .collect(Collectors.toList());
 
         int start = (int) pageable.getOffset();
@@ -112,7 +113,7 @@ public class MatchServiceImpl extends AbstractGenericService<Match, MatchRequest
         List<ChildPair> pairs = findCompatiblePairsRanked(requesterFamily, receiverFamily);
 
         if (pairs.isEmpty()) {
-            throw new IllegalStateException("No compatible child pairs found");
+            return null;
         }
         ChildPair bestPair = pairs.get(0);
 

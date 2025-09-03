@@ -30,7 +30,6 @@ public class FamilyMapper extends GenericMapper<FamilyRequest, FamilyResponse, F
         return Family.builder()
                 .representativeName(request.getRepresentativeName())
                 .neighborhood(neighborhood)
-                .district(request.getDistrict())
                 .description(request.getFamilyName())
                 .familyName(request.getFamilyName())
                 .profilePictureUrl(request.getProfilePictureUrl())
@@ -48,7 +47,6 @@ public class FamilyMapper extends GenericMapper<FamilyRequest, FamilyResponse, F
                 .id(entity.getId())
                 .representativeName(entity.getRepresentativeName())
                 .neighborhoodId(entity.getNeighborhood() != null ? entity.getNeighborhood().getId() : null)
-                .district(entity.getDistrict())
                 .build();
     }
 }

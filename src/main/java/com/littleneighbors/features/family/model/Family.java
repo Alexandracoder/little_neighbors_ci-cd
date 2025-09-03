@@ -48,9 +48,6 @@ public class Family implements Identifiable<Long> {
     @JoinColumn(name = "neighborhood_id")
     private Neighborhood neighborhood;
 
-    @Column(name = "district",nullable = false, length = 255)
-    private String district;
-
     @Builder.Default
     @OneToMany(mappedBy = "family", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Child> children = new ArrayList<>();
