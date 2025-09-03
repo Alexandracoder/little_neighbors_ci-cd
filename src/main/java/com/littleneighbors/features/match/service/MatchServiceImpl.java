@@ -20,8 +20,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
+
 
 @Service
 @RequiredArgsConstructor
@@ -95,11 +95,8 @@ public class MatchServiceImpl extends AbstractGenericService<Match, MatchRequest
     private boolean alreadyMatchedThisWeek(Family f1, Family f2) {
         LocalDateTime oneWeekAgo = LocalDateTime.now().minusWeeks(1);
 
-        return matchRepository.existsByRequesterInAndReceiverInAndCreatedAtAfter(
-                f1.getChildren(),
-                f2.getChildren(),
-                oneWeekAgo
-        );
+        return matchRepository.existsByRequester_FamilyAndReceiver_FamilyAndCreatedAtAfter(f1, f2, oneWeekAgo)
+                || matchRepository.existsByReceiver_FamilyAndRequester_FamilyAndCreatedAtAfter(f1, f2, oneWeekAgo);
     }
 
     private List<Family> findNearbyFamilies(Family currentFamily) {
@@ -107,23 +104,43 @@ public class MatchServiceImpl extends AbstractGenericService<Match, MatchRequest
                 currentFamily.getNeighborhood(),
                 currentFamily.getNeighborhood().getPostalCode()
         );
+
     }
+    protected record ChildPair(Child c1, Child c2, int score) {}
 
     private MatchResponse createPendingMatch(Family requesterFamily, Family receiverFamily) {
-        Optional<Child> requesterChildOpt = requesterFamily.getChildren().stream().findFirst();
-        Optional<Child> receiverChildOpt = receiverFamily.getChildren().stream().findFirst();
+        List<ChildPair> pairs = findCompatiblePairsRanked(requesterFamily, receiverFamily);
 
-        if (requesterChildOpt.isEmpty() || receiverChildOpt.isEmpty()) {
-            throw new IllegalStateException("Both families must have at least one child");
+        if (pairs.isEmpty()) {
+            throw new IllegalStateException("No compatible child pairs found");
         }
+        ChildPair bestPair = pairs.get(0);
 
         Match match = Match.builder()
-                .requester(requesterChildOpt.get())
-                .receiver(receiverChildOpt.get())
+                .requester(bestPair.c1())
+                .receiver(bestPair.c2())
                 .status(MatchStatus.PENDING)
                 .build();
-
         matchRepository.save(match);
         return mapper.toResponse(match);
     }
+
+    private List<ChildPair> findCompatiblePairsRanked(Family f1, Family f2) {
+        return f1.getChildren().stream()
+                .flatMap(c1 -> f2.getChildren().stream()
+                        .map(c2 -> new ChildPair(c1, c2, scorePair(c1, c2))))
+                        .filter(pair -> pair.score > Integer.MIN_VALUE)
+                        .sorted((a, b) -> Integer.compare(b.score, a.score))
+                        .toList();
+    }
+
+    private int scorePair(Child c1, Child c2) {
+        int score = 0;
+        int ageDiff = Math.abs(c1.getAge() - c2.getAge());
+        if (ageDiff <= 2) score+= 10;
+        if(hasCommonInterests(c1, c2)) score += 5;
+        return score;
+    }
 }
+
+
