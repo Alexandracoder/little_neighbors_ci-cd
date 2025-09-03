@@ -18,7 +18,6 @@ public class FamilyRequest {
     private String representativeName;
     @NotNull(message = "Neighborhood is required")
     private Long neighborhoodId;
-    private String district;
     @NotBlank(message = "Family name is required")
     private String familyName;
     @NotBlank(message = "Description is required")

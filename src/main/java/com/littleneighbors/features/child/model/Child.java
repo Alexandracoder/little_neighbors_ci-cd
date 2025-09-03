@@ -3,6 +3,7 @@ package com.littleneighbors.features.child.model;
 import com.littleneighbors.features.family.model.Family;
 import com.littleneighbors.features.interest.model.Interest;
 import com.littleneighbors.shared.Identifiable;
+import com.littleneighbors.shared.converter.GenderConverter;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -33,7 +34,7 @@ public class Child implements Identifiable<Long> {
     private Long id;
 
     @Column(nullable = false, length = 1)
-    @Enumerated(EnumType.STRING)
+    @Convert(converter = GenderConverter.class)
     private Gender gender;
 
     @Column(nullable = false)

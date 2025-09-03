@@ -33,7 +33,7 @@ public class  Neighborhood implements Identifiable<Long> {
     @NotNull(message = "Is a required field")
     private String streetName;
 
-    @Column(name = "postal code", nullable = true)
+    @Column(name = "postal_code", nullable = true)
     private String postalCode;
 
 }
