@@ -32,7 +32,7 @@ public class MatchController {
         return ResponseEntity.ok(matches);
 
     }
-    @PostMapping ("/{matchId}/accept")
+    @PostMapping("/{matchId}/accept")
     public ResponseEntity<MatchResponse> acceptMatch(@PathVariable Long matchId) {
         MatchResponse response = matchService.acceptMatch(matchId);
         return ResponseEntity.ok(response);
