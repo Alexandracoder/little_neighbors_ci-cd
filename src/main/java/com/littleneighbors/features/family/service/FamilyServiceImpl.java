@@ -7,9 +7,11 @@ import com.littleneighbors.features.family.model.Family;
 import com.littleneighbors.features.family.repository.FamilyRepository;
 import com.littleneighbors.features.neighborhood.model.Neighborhood;
 import com.littleneighbors.features.neighborhood.repository.NeighborhoodRepository;
+import com.littleneighbors.features.user.model.User;
 import com.littleneighbors.features.user.repository.UserRepository;
 import com.littleneighbors.shared.AbstractGenericService;
 import com.littleneighbors.shared.exceptions.ResourceNotFoundException;
+import com.littleneighbors.shared.exceptions.UserAlreadyHasFamily;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -40,18 +42,20 @@ public class FamilyServiceImpl
 
     @Override
     public FamilyResponse create(FamilyRequest request) {
+        User user = userRepository.findById(request.getUserId())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id " + request.getUserId()));
+
+        if (familyRepository.existsByUserId(user.getId())) {
+            throw new UserAlreadyHasFamily(request.getUserId());
+        }
+
+        Neighborhood neighborhood = neighborhoodRepository.findById(request.getNeighborhoodId())
+                .orElseThrow(() -> new ResourceNotFoundException("Neighborhood not found with id " + request.getNeighborhoodId()));
+
+
         Family family = mapper.fromRequest(request);
-
-        family.setUser(
-                userRepository.findById(request.getUserId())
-                        .orElseThrow(() -> new ResourceNotFoundException("User not found with id " + request.getUserId()))
-        );
-
-        family.setNeighborhood(
-                neighborhoodRepository.findById(request.getNeighborhoodId())
-                        .orElseThrow(() -> new ResourceNotFoundException("Neighborhood not found with id " + request.getNeighborhoodId()))
-        );
-        family.setDescription(request.getDescription());
+        family.setUser(user);
+        family.setNeighborhood(neighborhood);
 
         return mapper.toResponse(familyRepository.save(family));
     }

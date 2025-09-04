@@ -4,5 +4,5 @@ public enum MatchStatus {
     PENDING,
     ACCEPTED,
     REJECTED,
-    NO_MATCH
+    NO_MATCH;
 }

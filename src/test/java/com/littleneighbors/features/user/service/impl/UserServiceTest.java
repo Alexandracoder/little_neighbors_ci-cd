@@ -4,44 +4,53 @@ import com.littleneighbors.features.user.dto.UserRequest;
 import com.littleneighbors.features.user.dto.UserResponse;
 import com.littleneighbors.features.user.exception.DuplicateResourceException;
 import com.littleneighbors.features.user.mapper.UserMapper;
-import com.littleneighbors.features.user.model.Role;
 import com.littleneighbors.features.user.model.User;
 import com.littleneighbors.features.user.repository.UserRepository;
 import com.littleneighbors.features.user.service.UserServiceImpl;
 import com.littleneighbors.shared.exceptions.ResourceNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
-public class UserServiceImplTest {
+public class UserServiceTest {
+
     @Mock
     private UserRepository userRepository;
 
     @Mock
     private UserMapper userMapper;
 
-    @InjectMocks
+    private PasswordEncoder passwordEncoder;
+
     private UserServiceImpl userService;
 
     private UserRequest userRequest;
 
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
+
+        passwordEncoder = new BCryptPasswordEncoder();
+        userService = new UserServiceImpl(userRepository, userMapper, passwordEncoder);
+
+        userRequest = new UserRequest();
+        userRequest.setEmail("picopico@prueba.com");
+        userRequest.setPassword("password123");
+    }
+
     private User createTestUser() {
         User user = new User();
         user.setId(1L);
-        user.setEmail(userRequest.getEmail());
-        user.setPassword(userRequest.getPassword());
-        user.setRole(Role.ROLE_USER);
+        user.setEmail("picopico@prueba.com");
+        user.setPassword(passwordEncoder.encode("password123"));
         return user;
     }
 
@@ -49,23 +58,14 @@ public class UserServiceImplTest {
         UserResponse response = new UserResponse();
         response.setId(user.getId());
         response.setEmail(user.getEmail());
-        response.setRole(user.getRole().name());
+        response.setRole(user.getRole() != null ? user.getRole().name() : null);
         return response;
     }
-
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
-        userService = new UserServiceImpl(userRepository, userMapper);
-        userRequest = new UserRequest();
-        userRequest.setEmail("picopico@prueba.com");
-        userRequest.setPassword("password123");
-    }
-
 
     @Test
     void createUser_success() {
         when(userRepository.existsByEmail(userRequest.getEmail())).thenReturn(false);
+
         User savedUser = createTestUser();
         UserResponse expectedResponse = createTestUserResponse(savedUser);
 
@@ -85,9 +85,7 @@ public class UserServiceImplTest {
     void createUser_EmailExists_throwsException() {
         when(userRepository.existsByEmail(userRequest.getEmail())).thenReturn(true);
 
-        assertThrows(DuplicateResourceException.class, () -> {
-            userService.createUser(userRequest);
-        });
+        assertThrows(DuplicateResourceException.class, () -> userService.createUser(userRequest));
 
         verify(userRepository, never()).save(any(User.class));
     }
@@ -97,7 +95,7 @@ public class UserServiceImplTest {
         User user = createTestUser();
         UserResponse expectedResponse = createTestUserResponse(user);
 
-        when(userRepository.findById((user.getId()))).thenReturn(java.util.Optional.of(user));
+        when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
         when(userMapper.toResponse(user)).thenReturn(expectedResponse);
 
         UserResponse response = userService.getUserById(user.getId());
@@ -107,14 +105,12 @@ public class UserServiceImplTest {
         assertEquals(expectedResponse.getRole(), response.getRole());
 
         verify(userRepository, times(1)).findById(user.getId());
-
-
     }
 
     @Test
     void getUserById_throwsException() {
         Long id = 1L;
-        when(userRepository.findById(id)).thenReturn(java.util.Optional.empty());
+        when(userRepository.findById(id)).thenReturn(Optional.empty());
 
         assertThrows(ResourceNotFoundException.class, () -> userService.getUserById(id));
 
@@ -142,16 +138,14 @@ public class UserServiceImplTest {
     @Test
     void updateUser_success() {
         User existingUser = createTestUser();
-        existingUser.setId(1L); // Asegúrate de tener un ID
 
         UserRequest updateRequest = new UserRequest();
         updateRequest.setEmail("newmail@prueba.com");
         updateRequest.setPassword("newPassword123!");
 
         User updatedUser = createTestUser();
-        updatedUser.setId(existingUser.getId());
         updatedUser.setEmail(updateRequest.getEmail());
-        updatedUser.setPassword(updateRequest.getPassword());
+        updatedUser.setPassword(passwordEncoder.encode(updateRequest.getPassword()));
 
         UserResponse expectedResponse = createTestUserResponse(updatedUser);
 
@@ -173,22 +167,23 @@ public class UserServiceImplTest {
     void deleteUser_success() {
         User existingUser = createTestUser();
 
-        when(userRepository.findById(existingUser.getId())).thenReturn((java.util.Optional.of(existingUser)));
+        when(userRepository.findById(existingUser.getId())).thenReturn(Optional.of(existingUser));
 
-        userService.deleteUser((existingUser.getId()));
+        userService.deleteUser(existingUser.getId());
 
-        verify(userRepository, times(1)).delete((existingUser));
-
+        verify(userRepository, times(1)).delete(existingUser);
     }
+
     @Test
     void deleteUser_notFound_throwsException() {
         Long id = 1L;
 
-        when(userRepository.findById(id)).thenReturn(java.util.Optional.empty());
+        when(userRepository.findById(id)).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, () ->userService.deleteUser(id));
+        assertThrows(ResourceNotFoundException.class, () -> userService.deleteUser(id));
 
-        verify(userRepository,never()).delete(any(User.class));
+        verify(userRepository, never()).delete(any(User.class));
     }
 }
+
 
