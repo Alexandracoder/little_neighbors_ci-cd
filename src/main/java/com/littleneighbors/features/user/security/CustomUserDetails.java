@@ -10,7 +10,11 @@ import java.util.List;
 
 public class CustomUserDetails implements UserDetails {
 
-    private final User user;
+    private User user;
+
+    public CustomUserDetails() {
+
+    }
 
     public CustomUserDetails(User user) {
         this.user = user;
@@ -18,6 +22,9 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
+        if (user == null || user.getRole() == null) {
+            return List.of();
+        }
         return List.of(new SimpleGrantedAuthority(user.getRole().name()));
     }
 

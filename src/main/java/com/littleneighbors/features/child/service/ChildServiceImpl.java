@@ -5,6 +5,7 @@ import com.littleneighbors.features.child.dto.ChildResponse;
 import com.littleneighbors.features.child.mapper.ChildMapper;
 import com.littleneighbors.features.child.model.Child;
 import com.littleneighbors.features.child.repository.ChildRepository;
+import com.littleneighbors.features.family.dto.FamilyResponse;
 import com.littleneighbors.features.family.model.Family;
 import com.littleneighbors.features.family.repository.FamilyRepository;
 import com.littleneighbors.shared.AbstractGenericService;
@@ -57,6 +58,11 @@ public class ChildServiceImpl
     public Page<ChildResponse> getChildrenByFamily(Long familyId, Pageable pageable) {
         return childRepository.findByFamilyId(familyId, pageable)
                 .map(childMapper::toResponse);
+    }
+
+    @Override
+    public FamilyResponse getFamilyByUsername(String username) {
+        return null;
     }
 
     @Override
