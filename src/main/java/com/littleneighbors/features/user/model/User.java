@@ -35,6 +35,5 @@ public class User extends Auditable implements Identifiable<Long> {
     @Column(name = "role", nullable = false)
     @Enumerated(EnumType.STRING)
     private Role role;
-
 }
 
