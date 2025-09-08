@@ -8,6 +8,8 @@ import com.littleneighbors.features.user.model.Role;
 import com.littleneighbors.features.user.model.User;
 import com.littleneighbors.features.user.repository.UserRepository;
 import com.littleneighbors.shared.exceptions.ResourceNotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -42,7 +44,6 @@ public class UserServiceImpl  implements UserService {
         return userMapper.toResponse(savedUser);
     }
 
-    // Other methods remain the same...
     @Override
     public UserResponse getUserById(Long id) {
         User user = userRepository.findById(id)
@@ -79,6 +80,39 @@ public class UserServiceImpl  implements UserService {
                 .orElseThrow(() -> new ResourceNotFoundException("User does not exist with id: " + id));
 
         userRepository.delete(user);
+    }
+
+    @Override
+    public UserResponse create(UserRequest request) {
+            if(userRepository.existsByEmail(request.getEmail())) {
+                throw  new DuplicateResourceException("Email already Exists");
+            }
+            User user = new User();
+            user.setEmail((request.getEmail()));
+            user.setPassword(passwordEncoder.encode(request.getPassword()));
+            user.setRole(Role.ROLE_USER);
+
+            User savedUser = userRepository.save(user);
+            return userMapper.toResponse(savedUser);
+        }
+
+    @Override
+    public UserResponse findById(Long id) {
+        return null;
+    }
+
+    @Override
+    public Page<UserResponse> findAll(Pageable pageable) {
+        return Page.empty();
+    }
+
+    @Override
+    public UserResponse update(Long id, UserRequest request) {
+        return null;
+    }
+
+    @Override
+    public void delete(Long id) {
     }
 }
 

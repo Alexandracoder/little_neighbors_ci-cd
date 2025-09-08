@@ -27,7 +27,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
-public class Child implements Identifiable<Long> {
+public class Child implements Identifiable extends Auditable<Long> {
     public Long getId;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -51,14 +51,6 @@ public class Child implements Identifiable<Long> {
 
     @Column(name = "user_id", nullable = false)
     private Long userId;
-
-    @CreatedDate
-    @Column(name = "created_at", updatable = false)
-    private LocalDateTime createdAt;
-
-    @LastModifiedDate
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
 
     public int getAge() {
         if (birthDate == null) return 0;

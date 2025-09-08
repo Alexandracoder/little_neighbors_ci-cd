@@ -4,6 +4,8 @@ import com.littleneighbors.features.child.model.Child;
 import com.littleneighbors.features.neighborhood.model.Neighborhood;
 import com.littleneighbors.features.user.model.User;
 import com.littleneighbors.shared.Identifiable;
+import com.littleneighbors.shared.model.Auditable;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,7 +25,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Family implements Identifiable<Long> {
+public class Family implements Identifiable extends Auditable<Long> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private  Long id;
@@ -51,12 +53,4 @@ public class Family implements Identifiable<Long> {
     @Builder.Default
     @OneToMany(mappedBy = "family", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Child> children = new ArrayList<>();
-
-    @CreatedDate
-    @Column(name = "created_at", updatable = false)
-    private LocalDateTime createdAt;
-
-    @LastModifiedDate
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
 }
