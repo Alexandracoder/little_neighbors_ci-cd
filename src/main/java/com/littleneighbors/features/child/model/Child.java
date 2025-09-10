@@ -1,5 +1,4 @@
 package com.littleneighbors.features.child.model;
-
 import com.littleneighbors.features.family.model.Family;
 import com.littleneighbors.features.interest.model.Interest;
 import com.littleneighbors.shared.Identifiable;
@@ -28,7 +27,6 @@ import java.util.List;
 @AllArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
 public class Child implements Identifiable<Long> {
-    public Long getId;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -65,4 +63,10 @@ public class Child implements Identifiable<Long> {
         return Period.between(this.birthDate, LocalDate.now()).getYears();
 
     }
+
+    @Override
+    public Long getId() {
+        return id;
+    }
 }
+

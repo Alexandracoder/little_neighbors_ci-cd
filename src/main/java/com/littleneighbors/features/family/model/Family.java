@@ -1,5 +1,4 @@
 package com.littleneighbors.features.family.model;
-
 import com.littleneighbors.features.child.model.Child;
 import com.littleneighbors.features.neighborhood.model.Neighborhood;
 import com.littleneighbors.features.user.model.User;
@@ -26,7 +25,7 @@ import java.util.List;
 public class Family implements Identifiable<Long> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private  Long id;
+    private Long id;
 
     @OneToOne
     @JoinColumn(name = "user_id", nullable = false, unique = true)
@@ -59,4 +58,9 @@ public class Family implements Identifiable<Long> {
     @LastModifiedDate
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    @Override
+    public Long getId() {
+        return id;
+    }
 }
