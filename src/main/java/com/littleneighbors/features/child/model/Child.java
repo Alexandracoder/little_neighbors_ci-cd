@@ -17,7 +17,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
 import java.util.List;
-import java.util.Set;
+
 
 
 @Entity
@@ -27,7 +27,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
-public class Child implements Identifiable extends Auditable<Long> {
+public class Child implements Identifiable<Long> {
     public Long getId;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -46,11 +46,19 @@ public class Child implements Identifiable extends Auditable<Long> {
 
     @ManyToMany
     @JoinTable(name = "child_interests",
-     joinColumns = @JoinColumn(name = "child_id"), inverseJoinColumns = @JoinColumn(name = "interest_id"))
+            joinColumns = @JoinColumn(name = "child_id"), inverseJoinColumns = @JoinColumn(name = "interest_id"))
     private List<Interest> interests;
 
     @Column(name = "user_id", nullable = false)
     private Long userId;
+
+    @CreatedDate
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt;
+
+    @LastModifiedDate
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
 
     public int getAge() {
         if (birthDate == null) return 0;

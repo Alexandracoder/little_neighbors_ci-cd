@@ -197,7 +197,7 @@ public class NeighborhoodServiceImplTest extends GenericServiceTestBase<Neighbor
                 .thenReturn(existing);
         when(mapper.toResponse(existing))
                 .thenReturn(buildResponse());
-       NeighborhoodResponse result = service.update(getExistingId(), request);
+    NeighborhoodResponse result = service.update(getExistingId(), request);
 
         assertEquals(request.getCityName(), existing.getCityName());
         assertEquals(request.getName(), existing.getName());
