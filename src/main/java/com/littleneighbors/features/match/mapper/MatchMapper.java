@@ -20,7 +20,7 @@ public class MatchMapper extends GenericMapper<MatchRequest, MatchResponse, Matc
     public MatchResponse toResponse(Match entity) {
         return MatchResponse.builder()
                 .id(entity.getId())
-                .requesterChildId(entity.getRequester().getId)
+                .requesterChildId(entity.getRequester().getId())
                 .receiverChildId(entity.getReceiver().getId())
                 .status(entity.getStatus())
                 .createdAt(entity.getCreatedAt())
