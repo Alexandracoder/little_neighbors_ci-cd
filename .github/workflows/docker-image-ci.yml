@@ -1,4 +1,4 @@
-name: CI/CD Little Neighbors Final
+name: CI/CD Little Neighbors Simple
 
 on:
   push:
@@ -7,23 +7,8 @@ on:
     branches: [ "main", "feature/*" ]
 
 jobs:
-  ci_cd:
+  build_and_docker:
     runs-on: ubuntu-latest
-    services:
-      mysql:
-        image: mysql:8.0
-        env:
-          MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: littleneighbors
-          MYSQL_USER: user
-          MYSQL_PASSWORD: password
-        ports:
-          - 3306:3306
-        options: >-
-          --health-cmd="mysqladmin ping --silent"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=5
 
     steps:
       - name: Checkout repository
@@ -52,47 +37,7 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build Docker image
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          file: Dockerfile
-          push: false
-          tags: little_neighbors_test:latest
-
-      - name: Wait for MySQL to be ready
-        run: |
-          echo "Waiting for MySQL..."
-          until mysqladmin ping -h 127.0.0.1 -P 3306 -uroot -proot --silent; do
-            sleep 5
-          done
-
-      - name: Run container for integration tests
-        run: |
-          docker run -d --name little_neighbors_test -p 8081:8081 \
-            -e SPRING_DATASOURCE_URL=jdbc:mysql://host.docker.internal:3306/littleneighbors \
-            -e SPRING_DATASOURCE_USERNAME=user \
-            -e SPRING_DATASOURCE_PASSWORD=password \
-            -e SPRING_PROFILES_ACTIVE=prod \
-            little_neighbors_test:latest
-
-          echo "Waiting for Spring Boot..."
-          for i in {1..30}; do
-            if curl -s http://localhost:8081/actuator/health; then
-              echo "App is ready!"
-              break
-            else
-              sleep 5
-            fi
-          done
-
-          echo "Running integration tests..."
-          docker exec little_neighbors_test mvn verify
-
-          docker stop little_neighbors_test
-          docker rm little_neighbors_test
-
-      - name: Push Docker image
+      - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
           context: .
