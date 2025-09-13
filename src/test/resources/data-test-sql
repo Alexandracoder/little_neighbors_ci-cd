@@ -1,0 +1,21 @@
+SET FOREIGN_KEY_CHECKS = 0;
+
+TRUNCATE TABLE children;
+TRUNCATE TABLE families;
+TRUNCATE TABLE users;
+
+-- Usuarios de prueba (password: password123)
+INSERT INTO users (email, password, role) VALUES
+('admin1@test.com', '$2a$10$uTP3yEuYrTRWNWhNwbEAF.q6DOhde6hTSAWdGMWXWsrhMiPiVlYOa', 'ADMIN'),
+('user1@test.com', '$2a$10$uTP3yEuYrTRWNWhNwbEAF.q6DOhde6hTSAWdGMWXWsrhMiPiVlYOa', 'USER');
+
+-- Familias de ejemplo
+INSERT INTO families (name, user_id) VALUES
+('Familia Perez', 2);
+
+-- Niños de ejemplo
+INSERT INTO children (name, age, family_id) VALUES
+('Juan Perez', 5, 1);
+
+SET FOREIGN_KEY_CHECKS = 1;
+

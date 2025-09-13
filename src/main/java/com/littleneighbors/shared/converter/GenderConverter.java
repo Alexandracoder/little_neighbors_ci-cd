@@ -1,10 +1,10 @@
 package com.littleneighbors.shared.converter;
 
-import com.littleneighbors.features.child.model.Gender;
+import com.littleneighbors.features.child.entity.Gender;
 import jakarta.persistence.AttributeConverter;
 
-import static com.littleneighbors.features.child.model.Gender.FEMALE;
-import static com.littleneighbors.features.child.model.Gender.MALE;
+import static com.littleneighbors.features.child.entity.Gender.FEMALE;
+import static com.littleneighbors.features.child.entity.Gender.MALE;
 
 public class GenderConverter implements AttributeConverter<Gender, String> {
 

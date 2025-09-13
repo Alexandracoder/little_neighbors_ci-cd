@@ -1,6 +1,6 @@
 package com.littleneighbors.features.user.dto;
 
-import com.littleneighbors.features.user.model.Role;
+import com.littleneighbors.features.user.entity.Role;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

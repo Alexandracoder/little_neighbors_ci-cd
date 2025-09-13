@@ -3,8 +3,8 @@ package com.littleneighbors.features.match.mapper;
 
 import com.littleneighbors.features.match.dto.MatchRequest;
 import com.littleneighbors.features.match.dto.MatchResponse;
-import com.littleneighbors.features.match.model.Match;
-import com.littleneighbors.features.match.model.MatchStatus;
+import com.littleneighbors.features.match.entity.Match;
+import com.littleneighbors.features.match.entity.MatchStatus;
 import com.littleneighbors.shared.mapper.GenericMapper;
 import org.springframework.stereotype.Component;
 

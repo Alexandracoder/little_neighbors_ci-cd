@@ -1,13 +1,13 @@
 package com.littleneighbors.features.match.service;
 
-import com.littleneighbors.features.child.model.Child;
-import com.littleneighbors.features.family.model.Family;
+import com.littleneighbors.features.child.entity.Child;
+import com.littleneighbors.features.family.entity.Family;
 import com.littleneighbors.features.family.repository.FamilyRepository;
 import com.littleneighbors.features.match.dto.MatchRequest;
 import com.littleneighbors.features.match.dto.MatchResponse;
 import com.littleneighbors.features.match.mapper.MatchMapper;
-import com.littleneighbors.features.match.model.Match;
-import com.littleneighbors.features.match.model.MatchStatus;
+import com.littleneighbors.features.match.entity.Match;
+import com.littleneighbors.features.match.entity.MatchStatus;
 import com.littleneighbors.features.match.repository.MatchRepository;
 import com.littleneighbors.shared.AbstractGenericService;
 import com.littleneighbors.shared.exceptions.ResourceNotFoundException;

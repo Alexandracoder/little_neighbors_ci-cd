@@ -4,7 +4,7 @@ import com.littleneighbors.features.user.dto.UserRequest;
 import com.littleneighbors.features.user.dto.UserResponse;
 import com.littleneighbors.features.user.exception.DuplicateResourceException;
 import com.littleneighbors.features.user.mapper.UserMapper;
-import com.littleneighbors.features.user.model.User;
+import com.littleneighbors.features.user.entity.User;
 import com.littleneighbors.features.user.repository.UserRepository;
 import com.littleneighbors.features.user.service.UserServiceImpl;
 import com.littleneighbors.shared.exceptions.ResourceNotFoundException;

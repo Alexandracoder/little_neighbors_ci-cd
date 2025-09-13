@@ -1,14 +1,16 @@
-# 1. Imagen base con Java 21
+# STAGE 1: Build
+FROM maven:3.9.11-eclipse-temurin-21 AS build
+WORKDIR /src
+COPY . .
+RUN mvn dependency:go-offline
+RUN mvn clean package -DskipTests
+
+# STAGE 2: Run
 FROM eclipse-temurin:21-jdk-jammy
 
-# 2. Crear directorio de la app
 WORKDIR /app
+COPY --from=build /src/target/littleneighbors-0.0.1-SNAPSHOT.jar app.jar
 
-# 3. Copiar el archivo jar
-COPY target/littleneighbors-0.0.1-SNAPSHOT.jar app.jar
-
-# 4. Puerto expuesto
 EXPOSE 8081
 
-# 5. Comando para ejecutar la app
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar", "--spring.profiles.active=test"]

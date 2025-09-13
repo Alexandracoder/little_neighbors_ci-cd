@@ -1,0 +1,68 @@
+version: '3.8'
+
+services:
+  littleneighbors_app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: littleneighbors_app
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      SPRING_DATASOURCE_URL: jdbc:mysql://littleneighbors_db:3306/littleneighbors?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: littleneighbors_user
+      SPRING_DATASOURCE_PASSWORD: littleneighbors_password
+    depends_on:
+      - littleneighbors_db
+    command: ["./docker/wait-for-it.sh", "littleneighbors_db:3306", "--timeout=30", "--strict", "--", "java", "-jar", "/app.jar"]
+    ports:
+      - "8081:8081"
+    networks:
+      - littleneighbors_network
+
+  littleneighbors_tests:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: littleneighbors_tests
+    environment:
+      SPRING_PROFILES_ACTIVE: test
+      SPRING_DATASOURCE_URL: jdbc:mysql://littleneighbors_db:3306/testdb?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: testuser
+      SPRING_DATASOURCE_PASSWORD: testpassword
+    depends_on:
+      - littleneighbors_db
+    command: ["./docker/wait-for-it.sh", "littleneighbors_db:3306", "--timeout=30", "--strict", "--", "mvn", "test"]
+    networks:
+      - littleneighbors_network
+
+  littleneighbors_db:
+    image: mysql:8.0
+    container_name: littleneighbors_db
+    environment:
+      MYSQL_ROOT_PASSWORD: bootpassword
+      MYSQL_DATABASE: testdb
+      MYSQL_USER: testuser
+      MYSQL_PASSWORD: testpassword
+    ports:
+      - "3306:3306"
+    restart: unless-stopped
+    volumes:
+      - littleneighbors_db_data:/var/lib/mysql
+      - ./docker/mysql/init:/docker-entrypoint-initdb.d
+    networks:
+      - littleneighbors_network
+
+networks:
+  littleneighbors_network:
+    driver: bridge
+
+volumes:
+  littleneighbors_db_data:
+
+
+
+
+
+
+
+

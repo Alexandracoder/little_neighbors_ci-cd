@@ -1,6 +1,6 @@
 package com.littleneighbors.features.user.security;
 
-import com.littleneighbors.features.user.model.User;
+import com.littleneighbors.features.user.entity.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -25,7 +25,8 @@ public class CustomUserDetails implements UserDetails {
         if (user == null || user.getRole() == null) {
             return List.of();
         }
-        return List.of(new SimpleGrantedAuthority(user.getRole().name()));
+        return List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()));
+
     }
 
     @Override

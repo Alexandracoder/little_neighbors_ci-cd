@@ -1,7 +1,7 @@
 package com.littleneighbors.features.interest.dto;
 
 
-import com.littleneighbors.features.interest.model.InterestType;
+import com.littleneighbors.features.interest.entity.InterestType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

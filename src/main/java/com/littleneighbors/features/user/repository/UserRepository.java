@@ -1,7 +1,7 @@
 package com.littleneighbors.features.user.repository;
 
-import com.littleneighbors.features.user.model.Role;
-import com.littleneighbors.features.user.model.User;
+import com.littleneighbors.features.user.entity.Role;
+import com.littleneighbors.features.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

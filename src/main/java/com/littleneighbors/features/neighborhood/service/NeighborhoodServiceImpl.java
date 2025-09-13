@@ -1,11 +1,11 @@
 package com.littleneighbors.features.neighborhood.service;
 
-import com.littleneighbors.features.family.model.Family;
+import com.littleneighbors.features.family.entity.Family;
 import com.littleneighbors.features.family.repository.FamilyRepository;
 import com.littleneighbors.features.neighborhood.dto.NeighborhoodRequest;
 import com.littleneighbors.features.neighborhood.dto.NeighborhoodResponse;
 import com.littleneighbors.features.neighborhood.mapper.NeighborhoodMapper;
-import com.littleneighbors.features.neighborhood.model.Neighborhood;
+import com.littleneighbors.features.neighborhood.entity.Neighborhood;
 import com.littleneighbors.features.neighborhood.repository.NeighborhoodRepository;
 import com.littleneighbors.shared.AbstractGenericService;
 import com.littleneighbors.shared.exceptions.ResourceNotFoundException;

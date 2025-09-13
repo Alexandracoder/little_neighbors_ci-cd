@@ -1,6 +1,6 @@
 package com.littleneighbors.features.child.dto;
 
-import com.littleneighbors.features.child.model.Gender;
+import com.littleneighbors.features.child.entity.Gender;
 import lombok.Builder;
 import lombok.Data;
 import java.time.LocalDate;

@@ -2,7 +2,7 @@ package com.littleneighbors.features.interest.mapper;
 
 import com.littleneighbors.features.interest.dto.InterestRequest;
 import com.littleneighbors.features.interest.dto.InterestResponse;
-import com.littleneighbors.features.interest.model.Interest;
+import com.littleneighbors.features.interest.entity.Interest;
 import com.littleneighbors.shared.mapper.GenericMapper;
 import org.springframework.stereotype.Component;
 

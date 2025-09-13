@@ -1,6 +1,6 @@
 package com.littleneighbors.features.user.security;
 
-import com.littleneighbors.features.user.model.User;
+import com.littleneighbors.features.user.entity.User;
 import com.littleneighbors.features.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;

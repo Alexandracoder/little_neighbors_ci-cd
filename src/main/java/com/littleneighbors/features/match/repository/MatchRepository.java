@@ -1,8 +1,8 @@
 package com.littleneighbors.features.match.repository;
 
-import com.littleneighbors.features.child.model.Child;
-import com.littleneighbors.features.family.model.Family;
-import com.littleneighbors.features.match.model.Match;
+import com.littleneighbors.features.child.entity.Child;
+import com.littleneighbors.features.family.entity.Family;
+import com.littleneighbors.features.match.entity.Match;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

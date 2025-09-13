@@ -4,8 +4,8 @@ import com.littleneighbors.features.family.dto.FamilyLocationRequest;
 import com.littleneighbors.features.family.dto.FamilyLocationResponse;
 import com.littleneighbors.features.family.dto.FamilyRequest;
 import com.littleneighbors.features.family.dto.FamilyResponse;
-import com.littleneighbors.features.family.model.Family;
-import com.littleneighbors.features.neighborhood.model.Neighborhood;
+import com.littleneighbors.features.family.entity.Family;
+import com.littleneighbors.features.neighborhood.entity.Neighborhood;
 import com.littleneighbors.shared.service.GenericService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,6 +25,4 @@ public interface FamilyService extends GenericService<FamilyRequest, FamilyRespo
     FamilyLocationResponse getLocation(Long familyId);
     FamilyLocationResponse updateLocation(Long familyId, FamilyLocationRequest request);
 }
-
-
 

@@ -2,7 +2,7 @@ package com.littleneighbors.features.user.mapper;
 
 import com.littleneighbors.features.user.dto.UserRequest;
 import com.littleneighbors.features.user.dto.UserResponse;
-import com.littleneighbors.features.user.model.User;
+import com.littleneighbors.features.user.entity.User;
 import org.springframework.stereotype.Component;
 
 @Component
