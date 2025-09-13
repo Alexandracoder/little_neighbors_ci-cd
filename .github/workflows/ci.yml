@@ -2,51 +2,48 @@ name: CI
 
 on:
   push:
-    branches: [ "dev", "main" ]
+    branches:
+      - main
   pull_request:
-    branches: [ "dev", "main" ]
 
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
+
     services:
-      mysql:
-        image: mysql:8.0
-        env:
-          MYSQL_ROOT_PASSWORD: bootpassword
-          MYSQL_DATABASE: testdb
-          MYSQL_USER: testuser
-          MYSQL_PASSWORD: testpassword
+      docker:
+        image: docker:24.0.6
+        options: --privileged
         ports:
           - 3306:3306
-        options: >-
-          --health-cmd="mysqladmin ping -h localhost"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=5
 
     steps:
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up JDK 21
+      - name: Set up JDK
         uses: actions/setup-java@v3
         with:
           distribution: temurin
           java-version: 21
 
-      - name: Cache Maven packages
-        uses: actions/cache@v3
-
-        with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-
-
-      - name: Build and run tests with Docker Compose
+      - name: Install Docker Compose CLI (optional)
         run: |
-          docker-compose -f docker-compose-test.yml up -d littleneighbors_db
-          ./docker/wait-for-it.sh localhost:3306 --timeout=30 --strict -- echo "DB lista"
-          docker-compose -f docker-compose-test.yml run --rm littleneighbors_tests
-          docker-compose -f docker-compose-test.yml down
+          docker compose version
+
+      - name: Start DB container
+        run: |
+          docker compose -f docker-compose-test.yml up -d littleneighbors_db
+
+      - name: Wait for DB to be ready
+        run: |
+          bash docker/wait-for-it.sh localhost:3306 --timeout=30 --strict -- echo "DB lista"
+
+      - name: Run tests
+        run: |
+          docker compose -f docker-compose-test.yml run --rm littleneighbors_tests
+
+      - name: Shutdown containers
+        run: |
+          docker compose -f docker-compose-test.yml down
+
