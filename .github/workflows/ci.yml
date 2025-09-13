@@ -15,19 +15,27 @@ jobs:
         env:
           MYSQL_ROOT_PASSWORD: root
           MYSQL_DATABASE: littleneighbors
-        options: "--health-cmd='mysqladmin ping --silent' --health-interval=5s --health-timeout=2s --health-retries=10"
-
+        options: > 
+          --health-cmd="mysqladmin ping --silent"
+          --health-interval=5s
+          --health-timeout=2s
+          --health-retries=10
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repo
+        uses: actions/checkout@v3
 
       - name: Wait for DB
         run: ./docker/wait-for-it.sh db:3306 --timeout=30 --strict -- echo "DB lista"
 
       - name: Run tests
-        run: docker compose -f docker-compose-test.yml run --rm littleneighbors_tests
+        run: |
+          docker compose -f docker-compose-test.yml run --rm littleneighbors_tests
 
       - name: Shutdown containers
-        run: docker compose -f docker-compose-test.yml down
+        run: |
+          docker compose -f docker-compose-test.yml down
+
+
 
 
 
