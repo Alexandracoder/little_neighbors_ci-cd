@@ -7,43 +7,27 @@ on:
   pull_request:
 
 jobs:
-  build-and-test:
+  test:
     runs-on: ubuntu-latest
-
     services:
-      docker:
-        image: docker:24.0.6
-        options: --privileged
-        ports:
-          - 3306:3306
+      db:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: littleneighbors
+        options: > 
+          --health-cmd="mysqladmin ping --silent"
+          --health-interval=5s
+          --health-timeout=2s
+          --health-retries=10
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-      - name: Set up JDK
-        uses: actions/setup-java@v3
-        with:
-          distribution: temurin
-          java-version: 21
-
-      - name: Install Docker Compose CLI (optional)
-        run: |
-          docker compose version
-
-      - name: Start DB container
-        run: |
-          docker compose -f docker-compose-test.yml up -d littleneighbors_db
-
-      - name: Wait for DB to be ready
-        run: |
-          bash docker/wait-for-it.sh localhost:3306 --timeout=30 --strict -- echo "DB lista"
+      - name: Wait for DB
+        run: ./docker/wait-for-it.sh db:3306 --timeout=30 --strict -- echo "DB lista"
 
       - name: Run tests
-        run: |
-          docker compose -f docker-compose-test.yml run --rm littleneighbors_tests
+        run: docker compose -f docker-compose-test.yml run --rm littleneighbors_tests
 
-      - name: Shutdown containers
-        run: |
-          docker compose -f docker-compose-test.yml down
 
