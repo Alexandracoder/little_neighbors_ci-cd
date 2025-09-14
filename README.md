@@ -7,7 +7,6 @@
 ## 📁 Project Structure
 
 /docs/diagrams/ → Design and architecture diagrams
-/frontend/ → HTML and CSS frontend files
 /src/main/java/ → Java source code (Spring Boot)
 /src/main/resources/ → Configuration and resources
 
@@ -155,4 +154,5 @@ Please create a branch (feature/ or fix/) and open a Pull Request.
 
 
 ---
+
 
