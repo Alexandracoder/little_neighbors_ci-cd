@@ -1,6 +1,9 @@
 name: CI
 
-on: [push, pull_request]
+on:
+  push:
+    branches: [main]
+  pull_request:
 
 jobs:
   test:
@@ -14,19 +17,35 @@ jobs:
         options: > 
           --health-cmd="mysqladmin ping --silent" --health-interval=5s --health-timeout=2s --health-retries=10
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repo
+        uses: actions/checkout@v3
 
-      - name: Wait for DB
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: 21
+          distribution: temurin
+
+      - name: Wait for DB to be ready
         run: |
-          apt-get update && apt-get install -y netcat
-          until nc -zv db 3306; do echo "Waiting for MySQL..."; sleep 2; done
-          echo "DB lista"
+          echo "Waiting for MySQL..."
+          for i in {1..30}; do
+            if docker exec $(docker ps -q --filter ancestor=mysql:8.0) mysqladmin ping -uroot -proot --silent; then
+              echo "DB lista"
+              break
+            fi
+            echo "Waiting..."
+            sleep 1
+          done
 
       - name: Build and run tests
         run: |
-          docker compose -f docker-compose-test.yml up -d littleneighbors_db
+          docker compose -f docker-compose-test.yml build
           docker compose -f docker-compose-test.yml run --rm littleneighbors_tests
-          docker compose -f docker-compose-test.yml down
+
+      - name: Shutdown containers
+        run: docker compose -f docker-compose-test.yml down
+
 
 
 
