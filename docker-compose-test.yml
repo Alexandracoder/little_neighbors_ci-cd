@@ -1,29 +1,6 @@
 version: '3.8'
 
 services:
-  littleneighbors_db:
-    image: mysql:8.0
-    container_name: littleneighbors_db
-    environment:
-      MYSQL_ROOT_PASSWORD: bootpassword
-      MYSQL_DATABASE: testdb
-      MYSQL_USER: testuser
-      MYSQL_PASSWORD: testpassword
-    ports:
-      - "3306:3306"
-    restart: unless-stopped
-    volumes:
-      - littleneighbors_db_data:/var/lib/mysql
-      - ./docker/mysql/init:/docker-entrypoint-initdb.d
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      interval: 5s
-      timeout: 5s
-      retries: 10
-      start_period: 10s
-    networks:
-      - littleneighbors_network
-
   littleneighbors_app:
     build:
       context: .
@@ -35,9 +12,8 @@ services:
       SPRING_DATASOURCE_USERNAME: littleneighbors_user
       SPRING_DATASOURCE_PASSWORD: littleneighbors_password
     depends_on:
-      littleneighbors_db:
-        condition: service_healthy
-    command: ["./docker/wait-for-it.sh", "littleneighbors_db:3306", "--timeout=60", "--strict", "--", "java", "-jar", "/app.jar"]
+      - littleneighbors_db
+    command: ["./docker/wait-for-it.sh", "littleneighbors_db:3306", "--timeout=30", "--strict", "--", "java", "-jar", "/app.jar"]
     ports:
       - "8081:8081"
     networks:
@@ -54,9 +30,25 @@ services:
       SPRING_DATASOURCE_USERNAME: testuser
       SPRING_DATASOURCE_PASSWORD: testpassword
     depends_on:
-      littleneighbors_db:
-        condition: service_healthy
-    command: ["./docker/wait-for-it.sh", "littleneighbors_db:3306", "--timeout=60", "--strict", "--", "mvn", "test"]
+      - littleneighbors_db
+    command: ["./docker/wait-for-it.sh", "littleneighbors_db:3306", "--timeout=30", "--strict", "--", "mvn", "test", "-Dspring.profiles.active=test", "-Dspring-boot.run.arguments=--spring.main.web-application-type=none"]
+    networks:
+      - littleneighbors_network
+
+  littleneighbors_db:
+    image: mysql:8.0
+    container_name: littleneighbors_db
+    environment:
+      MYSQL_ROOT_PASSWORD: bootpassword
+      MYSQL_DATABASE: testdb
+      MYSQL_USER: testuser
+      MYSQL_PASSWORD: testpassword
+    ports:
+      - "3306:3306"
+    restart: unless-stopped
+    volumes:
+      - littleneighbors_db_data:/var/lib/mysql
+      - ./docker/mysql/init:/docker-entrypoint-initdb.d
     networks:
       - littleneighbors_network
 
@@ -66,6 +58,7 @@ networks:
 
 volumes:
   littleneighbors_db_data:
+
 
 
 
