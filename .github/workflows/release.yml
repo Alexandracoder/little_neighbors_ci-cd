@@ -48,4 +48,3 @@ jobs:
       - name: Clean up
         if: always()
         run: docker compose -f docker-compose-test.yml down -v
-
