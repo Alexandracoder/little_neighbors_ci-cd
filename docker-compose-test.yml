@@ -31,7 +31,7 @@ services:
       SPRING_DATASOURCE_PASSWORD: testpassword
     depends_on:
       - littleneighbors_db
-    command: ["./docker/wait-for-it.sh", "littleneighbors_db:3306", "--timeout=30", "--strict", "--", "mvn", "test"]
+    command: ["./docker/wait-for-it.sh", "littleneighbors_db:3306", "--timeout=30", "--strict", "--", "mvn", "test", "-Dspring.profiles.active=test", "-Dspring-boot.run.arguments=--spring.main.web-application-type=none"]
     networks:
       - littleneighbors_network
 
@@ -58,8 +58,6 @@ networks:
 
 volumes:
   littleneighbors_db_data:
-
-
 
 
 
