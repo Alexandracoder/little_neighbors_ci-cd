@@ -1,5 +1,10 @@
 name: CI
-on: [push, pull_request]
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
 
 jobs:
   test:
@@ -10,20 +15,32 @@ jobs:
         env:
           MYSQL_ROOT_PASSWORD: root
           MYSQL_DATABASE: littleneighbors
-        options: --health-cmd="mysqladmin ping --silent" --health-interval=5s --health-timeout=2s --health-retries=10
+        options: >-
+          --health-cmd="mysqladmin ping --silent"
+          --health-interval=5s
+          --health-timeout=2s
+          --health-retries=10
     steps:
       - uses: actions/checkout@v3
+
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
-          java-version: 21
           distribution: temurin
-      - name: Build and run tests
-        run: |
-          docker compose -f docker-compose-test.yml build
-          docker compose -f docker-compose-test.yml run --rm littleneighbors_tests
+          java-version: 21
+
+      - name: Make wait-for-it.sh executable
+        run: chmod +x docker/wait-for-it.sh
+
+      - name: Wait for DB to be ready
+        run: bash docker/wait-for-it.sh db:3306 --timeout=30 --strict -- echo "DB lista"
+
+      - name: Run tests
+        run: docker compose -f docker-compose-test.yml run --rm littleneighbors_tests
+
       - name: Shutdown containers
         run: docker compose -f docker-compose-test.yml down
+
 
 
 
