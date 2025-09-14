@@ -1,16 +1,15 @@
 package com.littleneighbors.features.interest.service;
 
-import com.littleneighbors.features.child.model.Child;
+import com.littleneighbors.features.child.entity.Child;
 import com.littleneighbors.features.child.repository.ChildRepository;
 import com.littleneighbors.features.interest.dto.InterestRequest;
 import com.littleneighbors.features.interest.dto.InterestResponse;
 import com.littleneighbors.features.interest.mapper.InterestMapper;
-import com.littleneighbors.features.interest.model.Interest;
+import com.littleneighbors.features.interest.entity.Interest;
 import com.littleneighbors.features.interest.repository.InterestRepository;
 import com.littleneighbors.shared.AbstractGenericService;
 import com.littleneighbors.shared.exceptions.ResourceNotFoundException;
 import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

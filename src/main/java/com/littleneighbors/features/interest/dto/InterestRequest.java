@@ -1,6 +1,6 @@
 package com.littleneighbors.features.interest.dto;
 
-import com.littleneighbors.features.interest.model.InterestType;
+import com.littleneighbors.features.interest.entity.InterestType;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

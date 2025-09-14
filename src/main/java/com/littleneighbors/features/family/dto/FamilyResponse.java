@@ -2,6 +2,7 @@ package com.littleneighbors.features.family.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.littleneighbors.features.child.dto.ChildResponse;
+import com.littleneighbors.shared.Identifiable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,9 +18,9 @@ public class FamilyResponse {
     private Long id;
     private String representativeName;
     private Long neighborhoodId;
-    private String district;
     private List<Long> childrenIds;
     private List<ChildInfo> children;
-}
+    }
+
 
 

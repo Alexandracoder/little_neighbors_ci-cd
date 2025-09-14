@@ -1,0 +1,14 @@
+# 1. Imagen base con Java 21
+FROM eclipse-temurin:21-jdk-jammy
+
+# 2. Crear directorio de la app
+WORKDIR /app
+
+# 3. Copiar el archivo jar
+COPY target/littleneighbors-0.0.1-SNAPSHOT.jar app.jar
+
+# 4. Puerto expuesto
+EXPOSE 8081
+
+# 5. Comando para ejecutar la app
+ENTRYPOINT ["java", "-jar", "app.jar"]

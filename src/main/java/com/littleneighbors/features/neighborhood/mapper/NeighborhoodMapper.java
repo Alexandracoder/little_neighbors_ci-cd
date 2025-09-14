@@ -3,7 +3,7 @@ package com.littleneighbors.features.neighborhood.mapper;
 import com.littleneighbors.features.family.mapper.FamilyMapper;
 import com.littleneighbors.features.neighborhood.dto.NeighborhoodRequest;
 import com.littleneighbors.features.neighborhood.dto.NeighborhoodResponse;
-import com.littleneighbors.features.neighborhood.model.Neighborhood;
+import com.littleneighbors.features.neighborhood.entity.Neighborhood;
 import com.littleneighbors.shared.mapper.GenericMapper;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.stereotype.Component;

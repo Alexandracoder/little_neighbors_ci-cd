@@ -3,9 +3,10 @@ package com.littleneighbors.features.child.service;
 import com.littleneighbors.features.child.dto.ChildRequest;
 import com.littleneighbors.features.child.dto.ChildResponse;
 import com.littleneighbors.features.child.mapper.ChildMapper;
-import com.littleneighbors.features.child.model.Child;
+import com.littleneighbors.features.child.entity.Child;
 import com.littleneighbors.features.child.repository.ChildRepository;
-import com.littleneighbors.features.family.model.Family;
+import com.littleneighbors.features.family.dto.FamilyResponse;
+import com.littleneighbors.features.family.entity.Family;
 import com.littleneighbors.features.family.repository.FamilyRepository;
 import com.littleneighbors.shared.AbstractGenericService;
 import com.littleneighbors.shared.exceptions.ResourceNotFoundException;
@@ -57,6 +58,11 @@ public class ChildServiceImpl
     public Page<ChildResponse> getChildrenByFamily(Long familyId, Pageable pageable) {
         return childRepository.findByFamilyId(familyId, pageable)
                 .map(childMapper::toResponse);
+    }
+
+    @Override
+    public FamilyResponse getFamilyByUsername(String username) {
+        return null;
     }
 
     @Override

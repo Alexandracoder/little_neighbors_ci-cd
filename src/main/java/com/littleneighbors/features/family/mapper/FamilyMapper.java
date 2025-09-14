@@ -4,8 +4,8 @@ import com.littleneighbors.features.child.mapper.ChildMapper;
 import com.littleneighbors.features.family.dto.ChildInfo;
 import com.littleneighbors.features.family.dto.FamilyRequest;
 import com.littleneighbors.features.family.dto.FamilyResponse;
-import com.littleneighbors.features.family.model.Family;
-import com.littleneighbors.features.neighborhood.model.Neighborhood;
+import com.littleneighbors.features.family.entity.Family;
+import com.littleneighbors.features.neighborhood.entity.Neighborhood;
 import com.littleneighbors.shared.mapper.GenericMapper;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.stereotype.Component;
@@ -30,7 +30,6 @@ public class FamilyMapper extends GenericMapper<FamilyRequest, FamilyResponse, F
         return Family.builder()
                 .representativeName(request.getRepresentativeName())
                 .neighborhood(neighborhood)
-                .district(request.getDistrict())
                 .description(request.getFamilyName())
                 .familyName(request.getFamilyName())
                 .profilePictureUrl(request.getProfilePictureUrl())
@@ -48,7 +47,6 @@ public class FamilyMapper extends GenericMapper<FamilyRequest, FamilyResponse, F
                 .id(entity.getId())
                 .representativeName(entity.getRepresentativeName())
                 .neighborhoodId(entity.getNeighborhood() != null ? entity.getNeighborhood().getId() : null)
-                .district(entity.getDistrict())
                 .build();
     }
 }

@@ -5,12 +5,13 @@ import com.littleneighbors.features.family.dto.FamilyResponse;
 import com.littleneighbors.features.family.service.FamilyService;
 import com.littleneighbors.shared.controller.GenericController;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("api/families")
+@RequestMapping("/families")
 public class FamilyController extends GenericController<FamilyRequest, FamilyResponse, Long> {
     private final FamilyService familyService;
 
@@ -19,6 +20,7 @@ public class FamilyController extends GenericController<FamilyRequest, FamilyRes
         this.familyService = familyService;
     }
     @GetMapping("/me")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<FamilyResponse> getMyFamily() {
         Long currentUserId = 1L;
         FamilyResponse myFamily = familyService.getFamilyByUserId(currentUserId);//Aquí reemplazaré el user cuando tenga implemente seguridad//

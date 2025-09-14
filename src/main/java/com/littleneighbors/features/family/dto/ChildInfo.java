@@ -1,7 +1,7 @@
 package com.littleneighbors.features.family.dto;
 
-import com.littleneighbors.features.child.model.Child;
-import com.littleneighbors.features.child.model.Gender;
+import com.littleneighbors.features.child.entity.Child;
+import com.littleneighbors.features.child.entity.Gender;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 

@@ -6,7 +6,6 @@ class LittleNeighborsApplicationTests {
 
     @Test
     void contextLoads() {
-        // Test vacío, no levanta Spring
         assert true;
     }
 }

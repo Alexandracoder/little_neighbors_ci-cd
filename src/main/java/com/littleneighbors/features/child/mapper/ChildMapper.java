@@ -2,8 +2,7 @@ package com.littleneighbors.features.child.mapper;
 
 import com.littleneighbors.features.child.dto.ChildRequest;
 import com.littleneighbors.features.child.dto.ChildResponse;
-import com.littleneighbors.features.child.model.Child;
-import com.littleneighbors.features.child.model.Gender;
+import com.littleneighbors.features.child.entity.Child;
 import com.littleneighbors.shared.mapper.GenericMapper;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;

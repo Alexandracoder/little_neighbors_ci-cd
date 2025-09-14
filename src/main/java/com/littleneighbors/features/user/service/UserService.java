@@ -3,6 +3,8 @@ package com.littleneighbors.features.user.service;
 
 import com.littleneighbors.features.user.dto.UserRequest;
 import com.littleneighbors.features.user.dto.UserResponse;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.util.List;
 

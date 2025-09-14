@@ -1,7 +1,7 @@
 package com.littleneighbors.features.interest.repository;
 
-import com.littleneighbors.features.interest.model.Interest;
-import com.littleneighbors.features.interest.model.InterestType;
+import com.littleneighbors.features.interest.entity.Interest;
+import com.littleneighbors.features.interest.entity.InterestType;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

@@ -1,6 +1,6 @@
 package com.littleneighbors.features.match.dto;
 
-import com.littleneighbors.features.match.model.MatchStatus;
+import com.littleneighbors.features.match.entity.MatchStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

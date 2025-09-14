@@ -1,6 +1,6 @@
 package com.littleneighbors.features.neighborhood.repository;
 
-import com.littleneighbors.features.neighborhood.model.Neighborhood;
+import com.littleneighbors.features.neighborhood.entity.Neighborhood;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
