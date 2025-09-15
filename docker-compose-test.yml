@@ -13,7 +13,7 @@ services:
       SPRING_DATASOURCE_PASSWORD: littleneighbors_password
     depends_on:
       - littleneighbors_db
-    command: ["./docker/wait-for-it.sh", "littleneighbors_db:3306", "--timeout=60", "--strict", "--", "java", "-jar", "/app/app.jar"]
+    command: ["./docker/wait-for-it.sh", "littleneighbors_db:3306", "--timeout=60", "--strict", "--", "java", "-jar", "/app.jar"]
     ports:
       - "8081:8081"
     networks:
@@ -31,9 +31,7 @@ services:
       SPRING_DATASOURCE_PASSWORD: testpassword
     depends_on:
       - littleneighbors_db
-    volumes:
-      - ./src/main/resources/application-test.properties:/app/application-test.properties
-    command: ["./docker/wait-for-it.sh", "littleneighbors_db:3306", "--timeout=60", "--strict", "--", "java", "-jar", "/app/app.jar", "--spring.config.location=classpath:/application-test.properties"]
+    command: ["./docker/wait-for-it.sh", "littleneighbors_db:3306", "--timeout=60", "--strict", "--", "mvn", "test"]
     networks:
       - littleneighbors_network
 
@@ -65,6 +63,7 @@ networks:
 
 volumes:
   littleneighbors_db_data:
+
 
 
 
