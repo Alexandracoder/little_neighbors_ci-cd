@@ -61,6 +61,3 @@ jobs:
             -Dspring.datasource.url=jdbc:mysql://127.0.0.1:3306/Little_Neighbors_Test?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true \
             -Dspring.datasource.username=root \
             -Dspring.datasource.password=password
-
-volumes:
-  littleneighbors_db_data:
