@@ -11,9 +11,12 @@ services:
       SPRING_DATASOURCE_URL: jdbc:mysql://littleneighbors_db:3306/littleneighbors?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
       SPRING_DATASOURCE_USERNAME: littleneighbors_user
       SPRING_DATASOURCE_PASSWORD: littleneighbors_password
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: com.mysql.cj.jdbc.Driver
+      SPRING_JPA_DATABASE_PLATFORM: org.hibernate.dialect.MySQL8Dialect
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
     depends_on:
       - littleneighbors_db
-    command: ["./docker/wait-for-it.sh", "littleneighbors_db:3306", "--timeout=120", "--strict", "--", "bash", "-c", "sleep 5 && java -jar /app.jar"]
+    command: ["./docker/wait-for-it.sh", "littleneighbors_db:3306", "--timeout=120", "--strict", "--", "bash", "-c", "sleep 5 && java -jar /app/app.jar"]
     ports:
       - "8081:8081"
     networks:
@@ -26,9 +29,12 @@ services:
     container_name: littleneighbors_tests
     environment:
       SPRING_PROFILES_ACTIVE: test
-      SPRING_DATASOURCE_URL: jdbc:mysql://littleneighbors_db:3306/testdb?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
-      SPRING_DATASOURCE_USERNAME: testuser
-      SPRING_DATASOURCE_PASSWORD: testpassword
+      SPRING_DATASOURCE_URL: jdbc:mysql://littleneighbors_db:3306/Little_Neighbors_Test?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: password
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: com.mysql.cj.jdbc.Driver
+      SPRING_JPA_DATABASE_PLATFORM: org.hibernate.dialect.MySQL8Dialect
+      SPRING_JPA_HIBERNATE_DDL_AUTO: create-drop
     depends_on:
       - littleneighbors_db
     command: ["./docker/wait-for-it.sh", "littleneighbors_db:3306", "--timeout=120", "--strict", "--", "bash", "-c", "sleep 5 && mvn test"]
@@ -39,10 +45,10 @@ services:
     image: mysql:8.0
     container_name: littleneighbors_db
     environment:
-      MYSQL_ROOT_PASSWORD: bootpassword
-      MYSQL_DATABASE: testdb
-      MYSQL_USER: testuser
-      MYSQL_PASSWORD: testpassword
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: Little_Neighbors_Test
+      MYSQL_USER: littleneighbors_user
+      MYSQL_PASSWORD: littleneighbors_password
     ports:
       - "3306:3306"
     restart: unless-stopped
@@ -63,6 +69,7 @@ networks:
 
 volumes:
   littleneighbors_db_data:
+
 
 
 
