@@ -1,30 +1,35 @@
-name: CI - Test
+name: CI - Run Tests
 
 on:
   push:
-    branches: [ feature/docker-ci-cd ]
+    branches: [ feature/docker-ci-cd, dev ]
   pull_request:
-    branches: [ main ]
+    branches: [ feature/docker-ci-cd, dev ]
   workflow_dispatch:
 
 jobs:
-  test:
+  tests:
     runs-on: ubuntu-latest
     services:
       littleneighbors_test_db:
         image: mysql:8.0
         env:
+          MYSQL_ROOT_PASSWORD: password
           MYSQL_DATABASE: Little_Neighbors_Test
-          MYSQL_ROOT_PASSWORD: root
+          MYSQL_USER: root
+          MYSQL_PASSWORD: password
+        ports:
+          - 3306:3306
         options: >-
-          --health-cmd "mysqladmin ping -h localhost -uroot -proot"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports: [] # No mapeamos puertos, es interno para GitHub Actions
+          --health-cmd="mysqladmin ping -h localhost -uroot -ppassword"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+        volumes:
+          - littleneighbors_db_data:/var/lib/mysql
 
     steps:
-      - name: Checkout code
+      - name: Checkout repo
         uses: actions/checkout@v4
 
       - name: Set up JDK 21
@@ -33,7 +38,7 @@ jobs:
           distribution: temurin
           java-version: 21
 
-      - name: Cache Maven dependencies
+      - name: Cache Maven packages
         uses: actions/cache@v4
         with:
           path: ~/.m2/repository
@@ -41,17 +46,21 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
-      - name: Wait for MySQL service
+      - name: Wait for MySQL to be ready
         run: |
-          echo "Waiting for MySQL to be healthy..."
+          echo "Waiting for MySQL..."
           for i in {1..30}; do
-            mysqladmin ping -h 127.0.0.1 -P 3306 -uroot -proot &> /dev/null && break
-            echo "Waiting 2s..."
+            mysqladmin ping -h 127.0.0.1 -uroot -ppassword && break
+            echo "Waiting..."
             sleep 2
           done
 
-      - name: Run tests
-        run: mvn clean test \
-          -Dspring.datasource.url=jdbc:mysql://127.0.0.1:3306/Little_Neighbors_Test?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true \
-          -Dspring.datasource.username=root \
-          -Dspring.datasource.password=root
+      - name: Run Maven tests
+        run: |
+          mvn clean test \
+            -Dspring.datasource.url=jdbc:mysql://127.0.0.1:3306/Little_Neighbors_Test?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true \
+            -Dspring.datasource.username=root \
+            -Dspring.datasource.password=password
+
+volumes:
+  littleneighbors_db_data:
