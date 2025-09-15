@@ -2,32 +2,56 @@ name: CI - Test
 
 on:
   push:
-    branches: [ dev ]
+    branches: [ feature/docker-ci-cd ]
   pull_request:
-    branches: [ dev ]
+    branches: [ main ]
   workflow_dispatch:
 
 jobs:
   test:
     runs-on: ubuntu-latest
-
     services:
       littleneighbors_test_db:
         image: mysql:8.0
         env:
           MYSQL_DATABASE: Little_Neighbors_Test
           MYSQL_ROOT_PASSWORD: root
-          MYSQL_USER: root
-          MYSQL_PASSWORD: password
-        ports:
-          - 3306:3306
         options: >-
           --health-cmd "mysqladmin ping -h localhost -uroot -proot"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
+        ports: [] # No mapeamos puertos, es interno para GitHub Actions
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Cache Maven dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: Wait for MySQL service
+        run: |
+          echo "Waiting for MySQL to be healthy..."
+          for i in {1..30}; do
+            mysqladmin ping -h 127.0.0.1 -P 3306 -uroot -proot &> /dev/null && break
+            echo "Waiting 2s..."
+            sleep 2
+          done
+
+      - name: Run tests
+        run: mvn clean test \
+          -Dspring.datasource.url=jdbc:mysql://127.0.0.1:3306/Little_Neighbors_Test?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true \
+          -Dspring.datasource.username=root \
+          -Dspring.datasource.password=root
