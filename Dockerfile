@@ -18,8 +18,15 @@ WORKDIR /app
 
 COPY --from=build /src/target/*.jar app.jar
 
-EXPOSE 8080
+# Define un argumento para el perfil de Spring
+ARG SPRING_PROFILES_ACTIVE=prod
 
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# Pasa el argumento como una variable de entorno
+ENV SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
+
+EXPOSE 8081
+
+# Ejecuta la aplicación con el perfil de Spring
+ENTRYPOINT ["java", "-jar", "app.jar", "--spring.profiles.active=${SPRING_PROFILES_ACTIVE}"]
 
 
