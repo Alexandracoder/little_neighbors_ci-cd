@@ -15,7 +15,6 @@ import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-
 import static com.littleneighbors.features.user.entity.Role.ROLE_USER;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -41,9 +40,6 @@ class FamilyServiceImplIntegrationTest {
 
     @BeforeEach
     void setup() {
-        familyRepository.deleteAll();
-        userRepository.deleteAll();
-        neighborhoodRepository.deleteAll();
 
         testUser = User.builder()
                 .email("testuser9@example.com")
