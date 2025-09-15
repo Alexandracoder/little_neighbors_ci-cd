@@ -5,13 +5,13 @@ services:
     image: mysql:8.0
     container_name: littleneighbors_test_db
     environment:
+      # Mantén solo la variable para la contraseña del usuario root
+      MYSQL_ROOT_PASSWORD: password
+      # La base de datos es para cualquier usuario, no solo root
       MYSQL_DATABASE: Little_Neighbors_Test
-      MYSQL_USER: root
-      MYSQL_PASSWORD: password
-      MYSQL_ROOT_PASSWORD: root
     restart: "no"
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-ppassword"]
       interval: 10s
       timeout: 5s
       retries: 5
