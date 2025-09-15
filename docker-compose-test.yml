@@ -1,74 +1,52 @@
 version: '3.8'
 
 services:
-  littleneighbors_app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: littleneighbors_app
-    environment:
-      SPRING_PROFILES_ACTIVE: dev
-      SPRING_DATASOURCE_URL: jdbc:mysql://littleneighbors_db:3306/littleneighbors?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
-      SPRING_DATASOURCE_USERNAME: littleneighbors_user
-      SPRING_DATASOURCE_PASSWORD: littleneighbors_password
-      SPRING_DATASOURCE_DRIVER_CLASS_NAME: com.mysql.cj.jdbc.Driver
-      SPRING_JPA_DATABASE_PLATFORM: org.hibernate.dialect.MySQL8Dialect
-      SPRING_JPA_HIBERNATE_DDL_AUTO: update
-    depends_on:
-      - littleneighbors_db
-    command: ["./docker/wait-for-it.sh", "littleneighbors_db:3306", "--timeout=120", "--strict", "--", "bash", "-c", "sleep 5 && java -jar /app/app.jar"]
-    ports:
-      - "8081:8081"
-    networks:
-      - littleneighbors_network
-
   littleneighbors_tests:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: maven:3.9.11-eclipse-temurin-21
     container_name: littleneighbors_tests
-    environment:
-      SPRING_PROFILES_ACTIVE: test
-      SPRING_DATASOURCE_URL: jdbc:mysql://littleneighbors_db:3306/Little_Neighbors_Test?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: password
-      SPRING_DATASOURCE_DRIVER_CLASS_NAME: com.mysql.cj.jdbc.Driver
-      SPRING_JPA_DATABASE_PLATFORM: org.hibernate.dialect.MySQL8Dialect
-      SPRING_JPA_HIBERNATE_DDL_AUTO: create-drop
-    depends_on:
-      - littleneighbors_db
-    command: ["./docker/wait-for-it.sh", "littleneighbors_db:3306", "--timeout=120", "--strict", "--", "bash", "-c", "sleep 5 && mvn test"]
-    networks:
-      - littleneighbors_network
-
-  littleneighbors_db:
-    image: mysql:8.0
-    container_name: littleneighbors_db
-    environment:
-      MYSQL_ROOT_PASSWORD: password
-      MYSQL_DATABASE: Little_Neighbors_Test
-      MYSQL_USER: littleneighbors_user
-      MYSQL_PASSWORD: littleneighbors_password
-    ports:
-      - "3306:3306"
-    restart: unless-stopped
+    working_dir: /src
     volumes:
-      - littleneighbors_db_data:/var/lib/mysql
-      - ./docker/mysql/init:/docker-entrypoint-initdb.d
+      - type: bind
+        source: .
+        target: /src
+        read_only: true
+    entrypoint: ["mvn", "-Ptest", "clean", "verify", "--no-transfer-progress"]
+    environment:
+      - SPRING_PROFILES_ACTIVE=test
+      - SPRING_DATASOURCE_URL=jdbc:mysql://littleneighbors_test_db:3306/Little_Neighbors_Test?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=password
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=create-drop
+      - SERVER_PORT=8081
+    restart: no
+    depends_on:
+      littleneighbors_test_db:
+        condition: service_healthy
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      interval: 5s
+      test: ["CMD", "curl", "-f", "http://localhost:8081/actuator/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  littleneighbors_test_db:
+    image: mysql:8.0
+    container_name: littleneighbors_test_db
+    environment:
+      MYSQL_DATABASE: Little_Neighbors_Test
+      MYSQL_USER: root
+      MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: root
+    restart: no
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      interval: 10s
       timeout: 5s
-      retries: 10
-    networks:
-      - littleneighbors_network
+      retries: 5
+      start_period: 30s
 
-networks:
-  littleneighbors_network:
-    driver: bridge
 
-volumes:
-  littleneighbors_db_data:
+
 
 
 
