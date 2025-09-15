@@ -13,7 +13,7 @@ services:
       SPRING_DATASOURCE_PASSWORD: littleneighbors_password
     depends_on:
       - littleneighbors_db
-    command: ["./docker/wait-for-it.sh", "littleneighbors_db:3306", "--timeout=30", "--strict", "--", "java", "-jar", "/app.jar"]
+    command: ["./docker/wait-for-it.sh", "littleneighbors_db:3306", "--timeout=60", "--strict", "--", "java", "-jar", "/app/app.jar"]
     ports:
       - "8081:8081"
     networks:
@@ -31,7 +31,9 @@ services:
       SPRING_DATASOURCE_PASSWORD: testpassword
     depends_on:
       - littleneighbors_db
-    command: ["./docker/wait-for-it.sh", "littleneighbors_db:3306", "--timeout=30", "--strict", "--", "mvn", "test", "-Dspring.profiles.active=test", "-Dspring-boot.run.arguments=--spring.main.web-application-type=none"]
+    volumes:
+      - ./src/main/resources/application-test.properties:/app/application-test.properties
+    command: ["./docker/wait-for-it.sh", "littleneighbors_db:3306", "--timeout=60", "--strict", "--", "java", "-jar", "/app/app.jar", "--spring.config.location=classpath:/application-test.properties"]
     networks:
       - littleneighbors_network
 
@@ -49,6 +51,11 @@ services:
     volumes:
       - littleneighbors_db_data:/var/lib/mysql
       - ./docker/mysql/init:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
     networks:
       - littleneighbors_network
 
@@ -58,6 +65,9 @@ networks:
 
 volumes:
   littleneighbors_db_data:
+
+
+
 
 
 
