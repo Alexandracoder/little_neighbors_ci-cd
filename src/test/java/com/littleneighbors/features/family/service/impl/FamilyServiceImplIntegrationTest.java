@@ -60,7 +60,7 @@ class FamilyServiceImplIntegrationTest {
     }
 
     @Test
-    void createFamily_integrationTest() {
+    public void createFamily_integrationTest() {
 
         FamilyRequest request = FamilyRequest.builder()
                 .userId(testUser.getId())
