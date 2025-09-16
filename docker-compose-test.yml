@@ -15,7 +15,7 @@ services:
       retries: 5
       start_period: 30s
     networks:
-      - littleneighbors_network
+      - littleneighbors_network # Add this
 
   littleneighbors_tests:
     image: maven:3.9.11-eclipse-temurin-21
@@ -23,7 +23,6 @@ services:
     working_dir: /app
     volumes:
       - .:/app
-      - ./target/surefire-reports:/app/target/surefire-reports # Add this line
     environment:
       - SPRING_PROFILES_ACTIVE=test
       - SPRING_DATASOURCE_URL=jdbc:mysql://littleneighbors_test_db:3306/Little_Neighbors_Test?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
@@ -35,7 +34,7 @@ services:
       littleneighbors_test_db:
         condition: service_healthy
     networks:
-      - littleneighbors_network
+      - littleneighbors_network # Add this
 
 networks:
   littleneighbors_network:
