@@ -14,13 +14,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
+import org.springframework.test.context.ActiveProfiles;
 
 import static com.littleneighbors.features.user.entity.Role.ROLE_USER;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@ActiveProfiles("test")
 @Transactional
 class FamilyServiceImplIntegrationTest {
 
@@ -41,9 +41,6 @@ class FamilyServiceImplIntegrationTest {
 
     @BeforeEach
     void setup() {
-        familyRepository.deleteAll();
-        userRepository.deleteAll();
-        neighborhoodRepository.deleteAll();
 
         testUser = User.builder()
                 .email("testuser9@example.com")
@@ -62,7 +59,7 @@ class FamilyServiceImplIntegrationTest {
     }
 
     @Test
-    void createFamily_integrationTest() {
+    public void createFamily_integrationTest() {
 
         FamilyRequest request = FamilyRequest.builder()
                 .userId(testUser.getId())

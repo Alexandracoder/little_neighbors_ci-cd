@@ -1,33 +1,31 @@
-name: CI - Test
+name: CI - Run Tests
 
 on:
   push:
-    branches: [ dev ]
+    branches: [ feature/docker-ci-cd, dev ]
   pull_request:
-    branches: [ dev ]
+    branches: [ feature/docker-ci-cd, dev ]
   workflow_dispatch:
 
 jobs:
-  test:
+  tests:
     runs-on: ubuntu-latest
 
-    services:
-      littleneighbors_test_db:
-        image: mysql:8.0
-        env:
-          MYSQL_DATABASE: Little_Neighbors_Test
-          MYSQL_ROOT_PASSWORD: root
-          MYSQL_USER: root
-          MYSQL_PASSWORD: password
-        ports:
-          - 3306:3306
-        options: >-
-          --health-cmd "mysqladmin ping -h localhost -uroot -proot"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Build and run tests with Docker Compose
+        run: docker compose -f docker-compose-test.yml up --build --exit-code-from littleneighbors_tests
+
+      - name: Upload Test Reports
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: surefire-reports
+          path: target/surefire-reports
+          retention-days: 1
+
+      - name: Cleanup
+        if: always()
+        run: docker compose -f docker-compose-test.yml down -v
