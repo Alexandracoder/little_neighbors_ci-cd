@@ -1,43 +1,45 @@
-version: '3.8'
-
-services:
-  littleneighbors_test_db:
-    image: mysql:8.0
-    container_name: littleneighbors_test_db
-    environment:
-      MYSQL_ROOT_PASSWORD: password
-      MYSQL_DATABASE: Little_Neighbors_Test
-    restart: "no"
-    ports:
-      - "3306:3306"
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-ppassword"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 30s
-    networks:
-      - littleneighbors_network
-
-  littleneighbors_tests:
-    image: maven:3.9.11-eclipse-temurin-21
-    container_name: littleneighbors_tests
-    working_dir: /app
-    volumes:
-      - .:/app
-    environment:
-      - SPRING_PROFILES_ACTIVE=test
-      - SPRING_DATASOURCE_URL=jdbc:mysql://littleneighbors_test_db:3306/Little_Neighbors_Test?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
-      - SPRING_DATASOURCE_USERNAME=root
-      - SPRING_DATASOURCE_PASSWORD=password
-    restart: "no"
-    entrypoint: ["sh", "-c", "sleep 10 && mvn clean test"]
-    depends_on:
-      littleneighbors_test_db:
-        condition: service_healthy
-    networks:
-      - littleneighbors_network
-
-networks:
-  littleneighbors_network:
-    driver: bridge
+#version: '3.8'
+#
+#services:
+#  # Servicio para el contenedor de la base de datos
+#  littleneighbors_db:
+#    image: mysql:8.0
+#    container_name: littleneighbors_app
+#    environment:
+#      MYSQL_ROOT_PASSWORD: password
+#      MYSQL_DATABASE: Little_Neighbors
+#    restart: "no"
+#    healthcheck:
+#      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-ppassword"]
+#      interval: 10s
+#      timeout: 5s
+#      retries: 5
+#      start_period: 30s
+#    networks:
+#      - littleneighbors_network
+#
+#  # Servicio para el contenedor de pruebas de la aplicación
+#  littleneighbors_tests:
+#    image: maven:3.9.11-eclipse-temurin-21
+#    # Nombre del contenedor corregido para que sea único
+#    container_name: littleneighbors_tests
+#    working_dir: /app
+#    volumes:
+#      - .:/app
+#    environment:
+#      - SPRING_PROFILES_ACTIVE=test
+#      - SPRING_DATASOURCE_URL=jdbc:mysql://littleneighbors_db:3306/Little_Neighbors_Test?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+#      - SPRING_DATASOURCE_USERNAME=root
+#      - SPRING_DATASOURCE_PASSWORD=password
+#    restart: "no"
+#    entrypoint: ["sh", "-c", "sleep 10 && mvn clean test"]
+#    depends_on:
+#      # Nombre del servicio corregido para que coincida con la base de datos
+#      littleneighbors_db:
+#        condition: service_healthy
+#    networks:
+#      - littleneighbors_network
+#
+#networks:
+#  littleneighbors_network:
+#    driver: bridge

@@ -20,7 +20,6 @@ import static com.littleneighbors.features.user.entity.Role.ROLE_USER;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ActiveProfiles("test")
 @Transactional
 class FamilyServiceImplIntegrationTest {
